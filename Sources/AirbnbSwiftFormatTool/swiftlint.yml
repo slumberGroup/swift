@@ -26,7 +26,8 @@ excluded:
   - ../../Pods
   - ../../../Pods
 
-indentation: 2
+# SG: uses an indent of 4 instead of the recommended 2 by airbnb
+indentation: 4
 
 # SG: keep thresholds to avoid SwiftLint defaults breaking builds
 cyclomatic_complexity:

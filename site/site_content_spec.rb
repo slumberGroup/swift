@@ -137,8 +137,9 @@ RSpec.describe SiteContent do
     it 'does not include rules that are fully autocorrected' do
       # The 'indent' rule is fully autocorrected by SwiftFormat,
       # so it should be excluded from SKILL.md
-      expect(skill_content).not_to include('Use 2 spaces to indent lines')
-      expect(readme_content).to include('Use 2 spaces to indent lines')
+      # Slumber Group uses an indent of 4 instead of the recommended 2 by airbnb
+      expect(skill_content).not_to include('Use 4 spaces to indent lines')
+      expect(readme_content).to include('Use 4 spaces to indent lines')
     end
 
     it 'does not include empty sections' do
