@@ -1,12 +1,12 @@
 # Airbnb Swift Style Guide
 
-[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fairbnb%2Fswift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/airbnb/swift)
+https://swift.airbnb.tech
 
 ## Goals
 
 Following this style guide should:
 
-- Make it easier to read and begin understanding unfamiliar code.
+- Make it easier to read and understand unfamiliar code.
 - Make code easier to maintain.
 - Reduce simple programmer errors.
 - Reduce cognitive load while coding.
@@ -16,17 +16,18 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
 ## Guiding Tenets
 
+- Most rules should be autocorrectable using [SwiftFormat](https://swiftformat.info).
+  - Autocorrect results in the best developer experience.
+  - If a rule purely affects the syntactical format of the code, it must be autocorrectable.
+  - Autocorrect should be non-destructive and should not affect the runtime behavior of code.
+  - Linting is best suited for rules that affect the runtime behavior of code or that discourage patterns with no direct replacement.
+  - Best practices without autocorrect or linting are still welcomed as general advice for humans and [AI agents](https://swift.airbnb.tech/skill).
+- We strive to align with best practices of the broader [Swift community](https://forums.swift.org).
 - This guide is in addition to the official [Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/). These rules should not contradict that document.
-- These rules should not fight Xcode's <kbd>^</kbd> + <kbd>I</kbd> indentation behavior.
-- We strive to make every rule lintable:
-  - If a rule changes the format of the code, it needs to be able to be reformatted automatically (either using [SwiftFormat](https://github.com/nicklockwood/SwiftFormat) or [SwiftLint](https://github.com/realm/SwiftLint) autocorrect).
-  - For rules that don't directly change the format of the code, we should have a lint rule that throws a warning.
-  - Exceptions to these rules should be rare and heavily justified.
-- Format rules should be non-destructive.
 
 ## Swift Package Manager command plugin
 
-We offer a Swift Package Manager command plugin that you can use to automatically reformat or lint your package according to the style guide. To use this command plugin with your package, all you need to do is add this repo as a dependency:
+We offer a Swift Package Manager command plugin that autocorrects or lints your package according to the style guide. To use this command plugin with your package, all you need to do is add this repo as a dependency:
 
 ```swift
 dependencies: [
@@ -73,6 +74,10 @@ The package plugin returns a non-zero exit code if there is a lint failure that 
 
 </details>
 
+## AI Skill
+
+We offer an [AI skill](https://swift.airbnb.tech/skill) that summarizes the non-autocorrected best practices defined in style guide.
+
 ## Table of Contents
 
 1. [Xcode Formatting](#xcode-formatting)
@@ -85,6 +90,8 @@ The package plugin returns a non-zero exit code if there is a lint failure that 
 1. [File Organization](#file-organization)
 1. [SwiftUI](#swiftui)
 1. [Testing](#testing)
+1. [Performance](#performance)
+1. [Apple Frameworks](#apple-frameworks)
 1. [Contributors](#contributors)
 1. [Amendments](#amendments)
 
@@ -96,13 +103,10 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrap](https://img.shields.io/badge/SwiftFormat-wrap-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrap)
+  [![SwiftFormat: wrap](https://img.shields.io/badge/SwiftFormat-wrap-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrap)
 
   #### Why?
-<<<<<<< HEAD
-=======
 
->>>>>>> upstream/master
   Due to larger screen sizes, we have opted to choose a page guide greater than 80.
 
   We currently only "strictly enforce" (lint / auto-format) a maximum column width of 130 characters to limit the cases where manual clean up is required for reformatted lines that fall slightly above the threshold.
@@ -113,7 +117,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: indent](https://img.shields.io/badge/SwiftFormat-indent-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#indent)
+  [![SwiftFormat: indent](https://img.shields.io/badge/SwiftFormat-indent-7B0051.svg)](https://swiftformat.info/rules/prerelease#indent)
 
   </details>
 
@@ -121,7 +125,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: trailingSpace](https://img.shields.io/badge/SwiftFormat-trailingSpace-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#trailingSpace)
+  [![SwiftFormat: trailingSpace](https://img.shields.io/badge/SwiftFormat-trailingSpace-7B0051.svg)](https://swiftformat.info/rules/prerelease#trailingSpace)
 
   </details>
 
@@ -305,7 +309,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: not fully autocorrectable -->
 
-  [![SwiftFormat: redundantType](https://img.shields.io/badge/SwiftFormat-redundantType-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantType)
+  [![SwiftFormat: redundantType](https://img.shields.io/badge/SwiftFormat-redundantType-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantType)
 
   ```swift
   // WRONG
@@ -358,7 +362,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: not fully autocorrectable -->
 
-  [![SwiftFormat: propertyTypes](https://img.shields.io/badge/SwiftFormat-propertyTypes-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#propertyTypes)
+  [![SwiftFormat: propertyTypes](https://img.shields.io/badge/SwiftFormat-propertyTypes-7B0051.svg)](https://swiftformat.info/rules/prerelease#propertyTypes)
 
   Prefer using inferred types when the right-hand-side value is a static member with a leading dot (e.g. an `init`, a `static` property / function, or an enum case). This applies to both local variables and property declarations:
 
@@ -442,7 +446,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: not fully autocorrectable -->
 
-  [![SwiftFormat: redundantSelf](https://img.shields.io/badge/SwiftFormat-redundantSelf-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantSelf)
+  [![SwiftFormat: redundantSelf](https://img.shields.io/badge/SwiftFormat-redundantSelf-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantSelf)
 
   ```swift
   final class Listing {
@@ -482,7 +486,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: strongifiedSelf](https://img.shields.io/badge/SwiftFormat-strongifiedSelf-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#strongifiedSelf)
+  [![SwiftFormat: strongifiedSelf](https://img.shields.io/badge/SwiftFormat-strongifiedSelf-7B0051.svg)](https://swiftformat.info/rules/prerelease#strongifiedSelf)
 
   ```swift
   // WRONG
@@ -516,7 +520,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: trailingCommas](https://img.shields.io/badge/SwiftFormat-trailingCommas-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#trailingCommas)
+  [![SwiftFormat: trailingCommas](https://img.shields.io/badge/SwiftFormat-trailingCommas-7B0051.svg)](https://swiftformat.info/rules/prerelease#trailingCommas)
 
   ```swift
   // WRONG
@@ -590,7 +594,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: spaceInsideBrackets](https://img.shields.io/badge/SwiftFormat-spaceInsideBrackets-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spaceInsideBrackets)
+  [![SwiftFormat: spaceInsideBrackets](https://img.shields.io/badge/SwiftFormat-spaceInsideBrackets-7B0051.svg)](https://swiftformat.info/rules/prerelease#spaceInsideBrackets)
 
   ```swift
   // WRONG
@@ -639,7 +643,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: spaceAroundOperators](https://img.shields.io/badge/SwiftFormat-spaceAroundOperators-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spacearoundoperators)
+  [![SwiftFormat: spaceAroundOperators](https://img.shields.io/badge/SwiftFormat-spaceAroundOperators-7B0051.svg)](https://swiftformat.info/rules/prerelease#spacearoundoperators)
 
   ```swift
   // WRONG
@@ -686,7 +690,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: spaceAroundOperators](https://img.shields.io/badge/SwiftFormat-spaceAroundOperators-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spacearoundoperators)
+  [![SwiftFormat: spaceAroundOperators](https://img.shields.io/badge/SwiftFormat-spaceAroundOperators-7B0051.svg)](https://swiftformat.info/rules/prerelease#spacearoundoperators)
 
   ```swift
   // WRONG
@@ -718,7 +722,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantParens](https://img.shields.io/badge/SwiftFormat-redundantParens-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantParens)
+  [![SwiftFormat: redundantParens](https://img.shields.io/badge/SwiftFormat-redundantParens-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantParens)
 
   ```swift
   // WRONG
@@ -736,11 +740,41 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
+- <a id='redundant-backticks'></a>(<a href='#redundant-backticks'>link</a>) **Omit backticks around identifiers unless required by the language.**
+
+  <details>
+
+  [![SwiftFormat: redundantBackticks](https://img.shields.io/badge/SwiftFormat-redundantBackticks-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantBackticks)
+
+  #### Why?
+
+  Backticks are only required when escaping a keyword that would otherwise be invalid in that position. Many Swift keywords are contextual and are allowed as identifiers.
+
+  ```swift
+  // WRONG
+  func travel(to planet: Planet, orbit: Orbit = .`default`) { ... }
+
+  // RIGHT
+  func travel(to planet: Planet, orbit: Orbit = .default) { ... }
+  ```
+
+  Backticks are required, however, when declaring an enum case named after a keyword:
+
+  ```swift
+  // ALSO RIGHT
+  enum Orbit {
+    case `default`
+    case geostationary
+  }
+  ```
+
+  </details>
+
 - <a id='unnecessary-enum-arguments'></a> (<a href='#unnecessary-enum-arguments'>link</a>) **Omit enum associated values from case statements when all arguments are unlabeled.**
 
   <details>
 
-  [![SwiftFormat: redundantPattern](https://img.shields.io/badge/SwiftFormat-redundantPattern-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantPattern)
+  [![SwiftFormat: redundantPattern](https://img.shields.io/badge/SwiftFormat-redundantPattern-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantPattern)
 
   ```swift
   // WRONG
@@ -766,7 +800,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: hoistPatternLet](https://img.shields.io/badge/SwiftFormat-hoistPatternLet-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#hoistPatternLet)
+  [![SwiftFormat: hoistPatternLet](https://img.shields.io/badge/SwiftFormat-hoistPatternLet-7B0051.svg)](https://swiftformat.info/rules/prerelease#hoistPatternLet)
 
   ```swift
   // WRONG
@@ -820,7 +854,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrapAttributes](https://img.shields.io/badge/SwiftFormat-wrapAttributes-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapAttributes)
+  [![SwiftFormat: wrapAttributes](https://img.shields.io/badge/SwiftFormat-wrapAttributes-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapAttributes)
 
   ```swift
   // WRONG
@@ -859,7 +893,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrapAttributes](https://img.shields.io/badge/SwiftFormat-wrapAttributes-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapAttributes)
+  [![SwiftFormat: wrapAttributes](https://img.shields.io/badge/SwiftFormat-wrapAttributes-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapAttributes)
 
   ```swift
   // WRONG. These simple property wrappers should be written on the same line as the declaration.
@@ -1012,7 +1046,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: modifiersOnSameLine](https://img.shields.io/badge/SwiftFormat-modifiersOnSameLine-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#modifiersOnSameLine)
+  [![SwiftFormat: modifiersOnSameLine](https://img.shields.io/badge/SwiftFormat-modifiersOnSameLine-7B0051.svg)](https://swiftformat.info/rules/prerelease#modifiersOnSameLine)
 
   ```swift
   // WRONG
@@ -1040,7 +1074,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapArguments)
+  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapArguments)
 
   ```swift
   // WRONG
@@ -1069,7 +1103,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapArguments)
+  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapArguments)
 
   ```swift
   // WRONG (too long)
@@ -1101,7 +1135,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: sortTypealiases](https://img.shields.io/badge/SwiftFormat-sortTypealiases-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#sortTypealiases)
+  [![SwiftFormat: sortTypealiases](https://img.shields.io/badge/SwiftFormat-sortTypealiases-7B0051.svg)](https://swiftformat.info/rules/prerelease#sortTypealiases)
 
   #### Why?
 
@@ -1127,15 +1161,19 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
-- <a id='prefer-if-let-shorthand'></a>(<a href='#prefer-if-let-shorthand'>link</a>) **Omit the right-hand side of the expression when unwrapping an optional property to a non-optional property with the same name.**
+- <a id='prefer-if-let-shorthand'></a>(<a href='#prefer-if-let-shorthand'>link</a>) **When unwrapping an optional, prefer reusing the existing identifier rather than introducing a new one.** However, it's fine to introduce a new name when doing so improves clarity at the use site.
 
   <details>
 
-  [![SwiftFormat: redundantOptionalBinding](https://img.shields.io/badge/SwiftFormat-redundantOptionalBinding-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantOptionalBinding)
+  <!-- ai-skill-include: autocorrect only applies to `if let galaxy = galaxy` -->
+
+  [![SwiftFormat: redundantOptionalBinding](https://img.shields.io/badge/SwiftFormat-redundantOptionalBinding-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantOptionalBinding)
 
   #### Why?
 
-  Following the rationale in [SE-0345](https://github.com/apple/swift-evolution/blob/main/proposals/0345-if-let-shorthand.md), this shorthand syntax removes unnecessary boilerplate while retaining clarity.
+  Following the rationale in [SE-0345](https://github.com/apple/swift-evolution/blob/main/proposals/0345-if-let-shorthand.md), this shorthand syntax removes unnecessary boilerplate while retaining clarity. Reusing the optional's existing name, rather than introducing a new identifier for the unwrapped value, reduces cognitive load by avoiding introducing new variable names for the same object.
+
+  A binding that reuses the same name (like `let galaxy = galaxy` or `guard let self = self`) is always redundant and should use the shorthand syntax:
 
   ```swift
   // WRONG
@@ -1144,10 +1182,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
     galaxy.name == "Milky Way"
   { ... }
 
-  guard
-    let galaxy = galaxy,
-    galaxy.name == "Milky Way"
-  else { ... }
+  guard let self = self else { ... }
 
   // RIGHT
   if
@@ -1155,10 +1190,28 @@ _You can enable the following settings in Xcode by running [this script](https:/
     galaxy.name == "Milky Way"
   { ... }
 
-  guard
-    let galaxy,
-    galaxy.name == "Milky Way"
-  else { ... }
+  guard let self else { ... }
+  ```
+
+  ```swift
+  // PREFERRED
+  if let spaceship {
+    launch(spaceship)
+  }
+
+  // LESS PREFERRED
+  if let ship = spaceship {
+    launch(ship)
+  }
+  ```
+
+  It's fine to introduce a new name, however, when doing so improves clarity at the use site:
+
+  ```swift
+  // ALSO RIGHT
+  if let destination = pendingDestination {
+    spaceship.travel(to: destination)
+  }
   ```
 
   </details>
@@ -1167,7 +1220,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: elseOnSameLine](https://img.shields.io/badge/SwiftFormat-elseOnSameLine-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#elseOnSameLine)
+  [![SwiftFormat: elseOnSameLine](https://img.shields.io/badge/SwiftFormat-elseOnSameLine-7B0051.svg)](https://swiftformat.info/rules/prerelease#elseOnSameLine)
 
   ```swift
   // WRONG
@@ -1225,7 +1278,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapArguments)
+  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapArguments)
 
   #### Why?
 
@@ -1610,11 +1663,11 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
-- <a id='wrap-multiline-conditional-assignment'></a>(<a href='#wrap-multiline-conditional-assignment'>link</a>) **Add a line break after the assignment operator (`=`) before a multi-line `if` or `switch` expression**, and indent the following `if` / `switch` expression. If the declaration fits on a single line, a line break is not required.
+- <a id='wrap-multiline-conditional-assignment'></a>(<a href='#wrap-multiline-conditional-assignment'>link</a>) **Add a line break after the assignment operator (`=`) before an `if` or `switch` expression**, and indent the following `if` / `switch` expression.
 
   <details>
 
-  [![SwiftFormat: wrapMultilineConditionalAssignment](https://img.shields.io/badge/SwiftFormat-wrapMultilineConditionalAssignment-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapMultilineConditionalAssignment)
+  [![SwiftFormat: wrapMultilineConditionalAssignment](https://img.shields.io/badge/SwiftFormat-wrapMultilineConditionalAssignment-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapMultilineConditionalAssignment)
 
   #### Why?
 
@@ -1665,13 +1718,6 @@ _You can enable the following settings in Xcode by running [this script](https:/
     case .jupiter, .saturn, .uranus, .neptune:
       .gasGiant
     }
-
-  // ALSO RIGHT. A line break is not required because the declaration fits on a single line.
-  let moonName = if let moon = planet.moon { moon.name } else { "none" }
-
-  // ALSO RIGHT. A line break is permitted if it helps with readability.
-  let moonName =
-    if let moon = planet.moon { moon.name } else { "none" }
   ```
 
   </details>
@@ -1680,7 +1726,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: conditionalAssignment](https://img.shields.io/badge/SwiftFormat-conditionalAssignment-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#conditionalAssignment)
+  [![SwiftFormat: conditionalAssignment](https://img.shields.io/badge/SwiftFormat-conditionalAssignment-7B0051.svg)](https://swiftformat.info/rules/prerelease#conditionalAssignment)
 
   #### Why?
 
@@ -1787,11 +1833,118 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
+- <a id='prefer-if-expressions-over-ternary-operators'></a>(<a href='#prefer-if-expressions-over-ternary-operators'>link</a>) **Prefer `if` expressions over ternary operators for single-expression return values.** Use ternary operators for conditions nested in other expressions, such as SwiftUI modifier conditions. Generally prefer `if` expressions for assignments after `=` operators.
+
+  <details>
+
+  <!-- ai-skill-include: autocorrect doesn't apply to conditional assignments after `=`, but this is still a good best practice -->
+
+  [![SwiftFormat: ifExpressions](https://img.shields.io/badge/SwiftFormat-ifExpressions-7B0051.svg)](https://swiftformat.info/rules/prerelease#ifExpressions)
+
+  #### Why?
+
+  If expressions are more readable than ternary expressions, especially for multiple nested conditions or multi-line values.
+
+  ```swift
+  // WRONG
+  var destination: Planet {
+    spaceship.hasWarpDrive
+      ? .proximaCentauri
+      : .mars
+  }
+
+  // RIGHT
+  var destination: Planet {
+    if spaceship.hasWarpDrive {
+      .proximaCentauri
+    } else {
+      .mars
+    }
+  }
+
+  // ALSO RIGHT. Single-line ternaries are permitted.
+  var color: Color {
+    spaceship.velocity > 0 ? .orange : .blue
+  }
+
+  // ALSO RIGHT. Use ternaries for conditions nested in other expressions,
+  // like SwiftUI modifier conditions.
+  Image(.spaceship)
+    .foregroundStyle(spaceship.velocity > 0 ? .orange : .blue)
+
+  // PREFERRED. `if` expressions are also generally preferred over ternaries for assignments.
+  let destination: Planet =
+    if spaceship.hasWarpDrive {
+      .proximaCentauri
+    } else {
+      .mars
+    }
+  ```
+
+  </details>
+
+- <a id='wrap-if-statement-bodies'></a>(<a href='#wrap-if-statement-bodies'>link</a>) **Wrap `if` statement and `if` expression bodies onto multiple lines.**
+
+  <details>
+
+  [![SwiftFormat: wrapIfStatementBodies](https://img.shields.io/badge/SwiftFormat-wrapIfStatementBodies-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapIfStatementBodies) [![SwiftFormat: wrapIfExpressionBodies](https://img.shields.io/badge/SwiftFormat-wrapIfExpressionBodies-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapIfExpressionBodies)
+
+  ```swift
+  // WRONG
+  if treatPlutoAsPlanet { planets.append(.pluto) }
+
+  let moonName = if let moon = planet.moon { moon.name } else { "none" }
+
+  // RIGHT
+  if treatPlutoAsPlanet {
+    planets.append(.pluto)
+  }
+
+  let moonName =
+    if let moon = planet.moon {
+      moon.name
+    } else {
+      "none"
+    }
+  ```
+
+  </details>
+
+- <a id='wrap-switch-case-bodies'></a>(<a href='#wrap-switch-case-bodies'>link</a>) **Wrap switch case bodies onto multiple lines.**
+
+  <details>
+
+  [![SwiftFormat: wrapSwitchCases](https://img.shields.io/badge/SwiftFormat-wrapSwitchCases-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapSwitchCases)
+
+  #### Examples
+
+  ```swift
+  // WRONG
+  func planets(of type: PlanetType) -> [Planet] {
+    switch type {
+    case .terrestrial: [.mercury, .venus, .earth, .mars]
+    case .gasGiant: [.jupiter, .saturn, .uranus, .neptune]
+    }
+  }
+
+  // RIGHT
+  func planets(of type: PlanetType) -> [Planet] {
+    switch type {
+    case .terrestrial:
+      [.mercury, .venus, .earth, .mars]
+    case .gasGiant:
+      [.jupiter, .saturn, .uranus, .neptune]
+    }
+  }
+  ```
+
+  </details>
+
 - <a id='blank-line-after-multiline-switch-case'></a>(<a href='#blank-line-after-multiline-switch-case'>link</a>) **Insert a blank line following a switch case with a multi-line body.** Spacing within an individual switch statement should be consistent. If any case has a multi-line body then all cases should include a trailing blank line. The last switch case doesn't need a blank line, since it is already followed by a closing brace.
 
   <details>
 
-  [![SwiftFormat: blankLineAfterSwitchCase](https://img.shields.io/badge/SwiftFormat-blankLineAfterSwitchCase-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#blankLineAfterSwitchCase) [![SwiftFormat: consistentSwitchCaseSpacing](https://img.shields.io/badge/SwiftFormat-consistentSwitchCaseSpacing-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#consistentSwitchCaseSpacing)
+  [![SwiftFormat: blankLineAfterSwitchCase](https://img.shields.io/badge/SwiftFormat-blankLineAfterSwitchCase-7B0051.svg)](https://swiftformat.info/rules/prerelease#blankLineAfterSwitchCase) [![SwiftFormat: consistentSwitchCaseSpacing](https://img.shields.io/badge/SwiftFormat-consistentSwitchCaseSpacing-7B0051.svg)](https://swiftformat.info/rules/prerelease#consistentSwitchCaseSpacing)
 
   #### Why?
 
@@ -1918,7 +2071,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantBreak](https://img.shields.io/badge/SwiftFormat-redundantBreak-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantBreak)
+  [![SwiftFormat: redundantBreak](https://img.shields.io/badge/SwiftFormat-redundantBreak-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantBreak)
 
   #### Why?
 
@@ -1950,7 +2103,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: elseOnSameLine](https://img.shields.io/badge/SwiftFormat-elseOnSameLine-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#elseOnSameLine)
+  [![SwiftFormat: elseOnSameLine](https://img.shields.io/badge/SwiftFormat-elseOnSameLine-7B0051.svg)](https://swiftformat.info/rules/prerelease#elseOnSameLine)
 
   ```swift
   // WRONG (else should be on its own line for multi-line guard statements)
@@ -1981,7 +2134,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: indent](https://img.shields.io/badge/SwiftFormat-indent-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#indent)
+  [![SwiftFormat: indent](https://img.shields.io/badge/SwiftFormat-indent-7B0051.svg)](https://swiftformat.info/rules/prerelease#indent)
 
   ```swift
   // WRONG
@@ -2015,27 +2168,11 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
-- <a id='favor-constructors'></a>(<a href='#favor-constructors'>link</a>) **Use constructors instead of Make() functions for NSRange and others.**
-
-  <details>
-
-  [![SwiftLint: legacy_constructor](https://img.shields.io/badge/SwiftLint-legacy__constructor-007A87.svg)](https://realm.github.io/SwiftLint/legacy_constructor)
-
-  ```swift
-  // WRONG
-  let range = NSMakeRange(10, 5)
-
-  // RIGHT
-  let range = NSRange(location: 10, length: 5)
-  ```
-
-  </details>
-
 - <a id='standard-library-type-shorthand'></a>(<a href='#standard-library-type-sugar'>link</a>) **For standard library types with a canonical shorthand form (`Optional`, `Array`, `Dictionary`), prefer using the shorthand form over the full generic form.**
 
   <details>
 
-  [![SwiftFormat: typeSugar](https://img.shields.io/badge/SwiftFormat-typeSugar-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#typeSugar)
+  [![SwiftFormat: typeSugar](https://img.shields.io/badge/SwiftFormat-typeSugar-7B0051.svg)](https://swiftformat.info/rules/prerelease#typeSugar)
 
   ```swift
   // WRONG
@@ -2055,7 +2192,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantInit](https://img.shields.io/badge/SwiftFormat-redundantInit-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantInit)
+  [![SwiftFormat: redundantInit](https://img.shields.io/badge/SwiftFormat-redundantInit-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantInit)
 
   ```swift
   // WRONG
@@ -2071,7 +2208,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: braces](https://img.shields.io/badge/SwiftFormat-braces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#braces)
+  [![SwiftFormat: braces](https://img.shields.io/badge/SwiftFormat-braces-7B0051.svg)](https://swiftformat.info/rules/prerelease#braces)
 
   ```swift
   // WRONG
@@ -2108,7 +2245,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrapMultilineStatementBraces](https://img.shields.io/badge/SwiftFormat-wrapMultilineStatementBraces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapMultilineStatementBraces)
+  [![SwiftFormat: wrapMultilineStatementBraces](https://img.shields.io/badge/SwiftFormat-wrapMultilineStatementBraces-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapMultilineStatementBraces)
 
   ```swift
   // WRONG
@@ -2133,7 +2270,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: spaceInsideBraces](https://img.shields.io/badge/SwiftFormat-spaceInsideBraces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spaceInsideBraces) [![SwiftFormat: spaceAroundBraces](https://img.shields.io/badge/SwiftFormat-spaceAroundBraces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spaceAroundBraces)
+  [![SwiftFormat: spaceInsideBraces](https://img.shields.io/badge/SwiftFormat-spaceInsideBraces-7B0051.svg)](https://swiftformat.info/rules/prerelease#spaceInsideBraces) [![SwiftFormat: spaceAroundBraces](https://img.shields.io/badge/SwiftFormat-spaceAroundBraces-7B0051.svg)](https://swiftformat.info/rules/prerelease#spaceAroundBraces)
 
   ```swift
   // WRONG
@@ -2167,7 +2304,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: spaceInsideParens](https://img.shields.io/badge/SwiftFormat-spaceInsideParens-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spaceInsideParens) [![SwiftFormat: spaceAroundParens](https://img.shields.io/badge/SwiftFormat-spaceAroundParens-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spaceAroundParens)
+  [![SwiftFormat: spaceInsideParens](https://img.shields.io/badge/SwiftFormat-spaceInsideParens-7B0051.svg)](https://swiftformat.info/rules/prerelease#spaceInsideParens) [![SwiftFormat: spaceAroundParens](https://img.shields.io/badge/SwiftFormat-spaceAroundParens-7B0051.svg)](https://swiftformat.info/rules/prerelease#spaceAroundParens)
 
   ```swift
   // WRONG
@@ -2187,7 +2324,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: blockComments](https://img.shields.io/badge/SwiftFormat-blockComments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#blockComments)
+  [![SwiftFormat: blockComments](https://img.shields.io/badge/SwiftFormat-blockComments-7B0051.svg)](https://swiftformat.info/rules/prerelease#blockComments)
 
   ```swift
   // WRONG
@@ -2239,7 +2376,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: docComments](https://img.shields.io/badge/SwiftFormat-docComments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#docComments)
+  [![SwiftFormat: docComments](https://img.shields.io/badge/SwiftFormat-docComments-7B0051.svg)](https://swiftformat.info/rules/prerelease#docComments)
 
   ```swift
   // WRONG
@@ -2362,7 +2499,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: docCommentsBeforeModifiers](https://img.shields.io/badge/SwiftFormat-docCommentsBeforeModifiers-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#docCommentsBeforeModifiers)
+  [![SwiftFormat: docCommentsBeforeModifiers](https://img.shields.io/badge/SwiftFormat-docCommentsBeforeModifiers-7B0051.svg)](https://swiftformat.info/rules/prerelease#docCommentsBeforeModifiers)
 
   ```swift
   // WRONG
@@ -2391,7 +2528,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: spaceAroundComments](https://img.shields.io/badge/SwiftFormat-spaceAroundComments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spaceAroundComments) [![SwiftFormat: spaceInsideComments](https://img.shields.io/badge/SwiftFormat-spaceInsideComments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spaceInsideComments)
+  [![SwiftFormat: spaceAroundComments](https://img.shields.io/badge/SwiftFormat-spaceAroundComments-7B0051.svg)](https://swiftformat.info/rules/prerelease#spaceAroundComments) [![SwiftFormat: spaceInsideComments](https://img.shields.io/badge/SwiftFormat-spaceInsideComments-7B0051.svg)](https://swiftformat.info/rules/prerelease#spaceInsideComments)
 
   ```swift
   // WRONG
@@ -2423,7 +2560,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: emptyBraces](https://img.shields.io/badge/SwiftFormat-emptyBraces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#emptyBraces)
+  [![SwiftFormat: emptyBraces](https://img.shields.io/badge/SwiftFormat-emptyBraces-7B0051.svg)](https://swiftformat.info/rules/prerelease#emptyBraces)
 
   ```swift
   // WRONG
@@ -2455,7 +2592,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: not fully autocorrectable (e.g. forEach over an optional array) -->
 
-  [![SwiftFormat: forLoop](https://img.shields.io/badge/SwiftFormat-forLoop-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#forLoop)
+  [![SwiftFormat: forLoop](https://img.shields.io/badge/SwiftFormat-forLoop-7B0051.svg)](https://swiftformat.info/rules/prerelease#forLoop)
 
   #### Why?
 
@@ -2494,7 +2631,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantVoidReturnType](https://img.shields.io/badge/SwiftFormat-redundantVoidReturnType-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantVoidReturnType)
+  [![SwiftFormat: redundantVoidReturnType](https://img.shields.io/badge/SwiftFormat-redundantVoidReturnType-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantVoidReturnType)
 
   ```swift
   // WRONG
@@ -2514,7 +2651,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapArguments) [![SwiftFormat: braces](https://img.shields.io/badge/SwiftFormat-braces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#braces)
+  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapArguments) [![SwiftFormat: braces](https://img.shields.io/badge/SwiftFormat-braces-7B0051.svg)](https://swiftformat.info/rules/prerelease#braces)
 
   ```swift
   class Universe {
@@ -2587,11 +2724,11 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
-- <a id='wrap-single-line-declaration-bodies'></a>(<a href='#wrap-single-line-declaration-bodies'>link</a>) **Always wrap function and property bodies onto multiple lines.**
+- <a id='wrap-single-line-declaration-bodies'></a>(<a href='#wrap-single-line-declaration-bodies'>link</a>) **Wrap function and property bodies onto multiple lines.**
 
   <details>
 
-  [![SwiftFormat: wrapFunctionBodies](https://img.shields.io/badge/SwiftFormat-wrapFunctionBodies-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapFunctionBodies) [![SwiftFormat: wrapPropertyBodies](https://img.shields.io/badge/SwiftFormat-wrapPropertyBodies-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapPropertyBodies)
+  [![SwiftFormat: wrapFunctionBodies](https://img.shields.io/badge/SwiftFormat-wrapFunctionBodies-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapFunctionBodies) [![SwiftFormat: wrapPropertyBodies](https://img.shields.io/badge/SwiftFormat-wrapPropertyBodies-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapPropertyBodies)
 
   ```swift
   // WRONG
@@ -2637,7 +2774,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapArguments)
+  [![SwiftFormat: wrapArguments](https://img.shields.io/badge/SwiftFormat-wrapArguments-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapArguments)
 
   ```swift
   // WRONG
@@ -2683,7 +2820,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: unusedArguments](https://img.shields.io/badge/SwiftFormat-unusedArguments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#unusedArguments)
+  [![SwiftFormat: unusedArguments](https://img.shields.io/badge/SwiftFormat-unusedArguments-7B0051.svg)](https://swiftformat.info/rules/prerelease#unusedArguments)
 
   #### Why?
 
@@ -2755,7 +2892,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: blanklinesbetweenchainedfunctions](https://img.shields.io/badge/SwiftFormat-blankLinesBetweenChainedFunctions-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#blanklinesbetweenchainedfunctions)
+  [![SwiftFormat: blanklinesbetweenchainedfunctions](https://img.shields.io/badge/SwiftFormat-blankLinesBetweenChainedFunctions-7B0051.svg)](https://swiftformat.info/rules/prerelease#blanklinesbetweenchainedfunctions)
 
   #### Why?
 
@@ -2801,7 +2938,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantTypedThrows](https://img.shields.io/badge/SwiftFormat-redundantTypedThrows-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantTypedThrows)
+  [![SwiftFormat: redundantTypedThrows](https://img.shields.io/badge/SwiftFormat-redundantTypedThrows-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantTypedThrows)
 
   #### Why?
 
@@ -2835,7 +2972,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: void](https://img.shields.io/badge/SwiftFormat-void-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#void)
+  [![SwiftFormat: void](https://img.shields.io/badge/SwiftFormat-void-7B0051.svg)](https://swiftformat.info/rules/prerelease#void)
 
   ```swift
   // WRONG
@@ -2855,7 +2992,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: unusedArguments](https://img.shields.io/badge/SwiftFormat-unusedArguments-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#unusedArguments)
+  [![SwiftFormat: unusedArguments](https://img.shields.io/badge/SwiftFormat-unusedArguments-7B0051.svg)](https://swiftformat.info/rules/prerelease#unusedArguments)
 
   #### Why?
 
@@ -2880,7 +3017,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: spaceInsideBraces](https://img.shields.io/badge/SwiftFormat-spaceInsideBraces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spaceInsideBraces) [![SwiftFormat: spaceAroundBraces](https://img.shields.io/badge/SwiftFormat-spaceAroundBraces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spaceAroundBraces)
+  [![SwiftFormat: spaceInsideBraces](https://img.shields.io/badge/SwiftFormat-spaceInsideBraces-7B0051.svg)](https://swiftformat.info/rules/prerelease#spaceInsideBraces) [![SwiftFormat: spaceAroundBraces](https://img.shields.io/badge/SwiftFormat-spaceAroundBraces-7B0051.svg)](https://swiftformat.info/rules/prerelease#spaceAroundBraces)
 
   ```swift
   // WRONG
@@ -2920,7 +3057,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantVoidReturnType](https://img.shields.io/badge/SwiftFormat-redundantVoidReturnType-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantVoidReturnType)
+  [![SwiftFormat: redundantVoidReturnType](https://img.shields.io/badge/SwiftFormat-redundantVoidReturnType-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantVoidReturnType)
 
   ```swift
   // WRONG
@@ -2940,7 +3077,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: trailingClosures](https://img.shields.io/badge/SwiftFormat-trailingClosures-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#trailingClosures)
+  [![SwiftFormat: trailingClosures](https://img.shields.io/badge/SwiftFormat-trailingClosures-7B0051.svg)](https://swiftformat.info/rules/prerelease#trailingClosures)
 
   ```swift
   // WRONG
@@ -3046,7 +3183,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: spaceAroundOperators](https://img.shields.io/badge/SwiftFormat-spaceAroundOperators-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#spacearoundoperators)
+  [![SwiftFormat: spaceAroundOperators](https://img.shields.io/badge/SwiftFormat-spaceAroundOperators-7B0051.svg)](https://swiftformat.info/rules/prerelease#spacearoundoperators)
 
   ```swift
   // WRONG
@@ -3080,7 +3217,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: wrap](https://img.shields.io/badge/SwiftFormat-wrap-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrap)
+  [![SwiftFormat: wrap](https://img.shields.io/badge/SwiftFormat-wrap-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrap)
 
   ```swift
   // WRONG (too long)
@@ -3107,7 +3244,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: andOperator](https://img.shields.io/badge/SwiftFormat-andOperator-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#andOperator)
+  [![SwiftFormat: andOperator](https://img.shields.io/badge/SwiftFormat-andOperator-7B0051.svg)](https://swiftformat.info/rules/prerelease#andOperator)
 
   ```swift
   // WRONG
@@ -3145,7 +3282,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: not fully autocorrectable (SwiftFormat doesn't know if the extension is of a concrete type or a protocol) -->
 
-  [![SwiftFormat: genericExtensions](https://img.shields.io/badge/SwiftFormat-genericExtensions-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#genericExtensions)
+  [![SwiftFormat: genericExtensions](https://img.shields.io/badge/SwiftFormat-genericExtensions-7B0051.svg)](https://swiftformat.info/rules/prerelease#genericExtensions)
 
   ```swift
   // WRONG
@@ -3174,7 +3311,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: semicolons](https://img.shields.io/badge/SwiftFormat-semicolons-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#semicolons)
+  [![SwiftFormat: semicolons](https://img.shields.io/badge/SwiftFormat-semicolons-7B0051.svg)](https://swiftformat.info/rules/prerelease#semicolons)
 
   ### Examples
 
@@ -3218,7 +3355,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftLint: implicitly_unwrapped_optional](https://img.shields.io/badge/SwiftLint-implicitly__unwrapped__optional-007A87.svg)](https://realm.github.io/SwiftLint/implicitly_unwrapped_optional)
+  [![SwiftLint: implicitly_unwrapped_optional](https://img.shields.io/badge/SwiftLint-implicitly__unwrapped__optional-007A87.svg)](https://realm.github.io/SwiftLint/implicitly_unwrapped_optional.html)
 
   ```swift
   // WRONG
@@ -3254,7 +3391,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: not fully autocorrectable (e.g. have to preserve existing init parameter ordering to not break build) -->
 
-  [![SwiftFormat: redundantMemberwiseInit](https://img.shields.io/badge/SwiftFormat-redundantMemberwiseInit-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantMemberwiseInit)
+  [![SwiftFormat: redundantMemberwiseInit](https://img.shields.io/badge/SwiftFormat-redundantMemberwiseInit-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantMemberwiseInit)
 
   #### Why?
 
@@ -3441,7 +3578,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: modifierOrder](https://img.shields.io/badge/SwiftFormat-modifierOrder-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#modifierOrder)
+  [![SwiftFormat: modifierOrder](https://img.shields.io/badge/SwiftFormat-modifierOrder-7B0051.svg)](https://swiftformat.info/rules/prerelease#modifierOrder)
 
   ```swift
   // WRONG
@@ -3459,7 +3596,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantFileprivate](https://img.shields.io/badge/SwiftFormat-redundantFileprivate-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantFileprivate) [![SwiftFormat: redundantPublic](https://img.shields.io/badge/SwiftFormat-redundantPublic-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantPublic)
+  [![SwiftFormat: redundantFileprivate](https://img.shields.io/badge/SwiftFormat-redundantFileprivate-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantFileprivate) [![SwiftFormat: redundantPublic](https://img.shields.io/badge/SwiftFormat-redundantPublic-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantPublic)
 
   ```swift
   // WRONG
@@ -3547,7 +3684,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantInternal](https://img.shields.io/badge/SwiftFormat-redundantInternal-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantInternal)
+  [![SwiftFormat: redundantInternal](https://img.shields.io/badge/SwiftFormat-redundantInternal-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantInternal)
 
   ```swift
   // WRONG
@@ -3569,7 +3706,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: extensionAccessControl](https://img.shields.io/badge/SwiftFormat-extensionAccessControl-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#extensionaccesscontrol)
+  [![SwiftFormat: extensionAccessControl](https://img.shields.io/badge/SwiftFormat-extensionAccessControl-7B0051.svg)](https://swiftformat.info/rules/prerelease#extensionaccesscontrol)
 
   #### Why?
 
@@ -3640,7 +3777,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: enumNamespaces](https://img.shields.io/badge/SwiftFormat-enumNamespaces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#enumNamespaces)
+  [![SwiftFormat: enumNamespaces](https://img.shields.io/badge/SwiftFormat-enumNamespaces-7B0051.svg)](https://swiftformat.info/rules/prerelease#enumNamespaces)
   - Avoid creating non-namespaced global constants and functions.
   - Feel free to nest namespaces where it adds clarity.
   - `private` globals are permitted, since they are scoped to a single file and do not pollute the global namespace. Consider placing private globals in an `enum` namespace to match the guidelines for other declaration types.
@@ -3687,7 +3824,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantRawValues](https://img.shields.io/badge/SwiftFormat-redundantRawValues-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantRawValues)
+  [![SwiftFormat: redundantRawValues](https://img.shields.io/badge/SwiftFormat-redundantRawValues-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantRawValues)
 
   #### Why?
 
@@ -3850,7 +3987,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftLint: fatal_error_message](https://img.shields.io/badge/SwiftLint-fatal__error__message-007A87.svg)](https://realm.github.io/SwiftLint/fatal_error_message)
+  [![SwiftLint: fatal_error_message](https://img.shields.io/badge/SwiftLint-fatal__error__message-007A87.svg)](https://realm.github.io/SwiftLint/fatal_error_message.html)
 
   ```swift
   func didSubmitText(_ text: String) {
@@ -3884,7 +4021,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: simplifyGenericConstraints](https://img.shields.io/badge/SwiftFormat-simplifyGenericConstraints-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#simplifyGenericConstraints)
+  [![SwiftFormat: simplifyGenericConstraints](https://img.shields.io/badge/SwiftFormat-simplifyGenericConstraints-7B0051.svg)](https://swiftformat.info/rules/prerelease#simplifyGenericConstraints)
 
   #### Why?
 
@@ -3933,7 +4070,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include -->
 
-  [![SwiftFormat: preferFinalClasses](https://img.shields.io/badge/SwiftFormat-preferFinalClasses-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#preferFinalClasses)
+  [![SwiftFormat: preferFinalClasses](https://img.shields.io/badge/SwiftFormat-preferFinalClasses-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferFinalClasses)
 
   ```swift
   // WRONG
@@ -3996,7 +4133,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
-- <a id='static-type-methods-by-default'></a>(<a href='#static-type-methods-by-default'>link</a>) When defining type functions in classes, prefer `static func` over `class func`.
+- <a id='static-type-methods-by-default'></a>(<a href='#static-type-methods-by-default'>link</a>) **When defining type functions in classes, prefer `static func` over `class func`.**
 
   <details>
 
@@ -4091,7 +4228,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftLint: unused_optional_binding](https://img.shields.io/badge/SwiftLint-unused__optional__binding-007A87.svg)](https://realm.github.io/SwiftLint/unused_optional_binding)
+  [![SwiftLint: unused_optional_binding](https://img.shields.io/badge/SwiftLint-unused__optional__binding-007A87.svg)](https://realm.github.io/SwiftLint/unused_optional_binding.html)
 
   #### Why?
 
@@ -4117,7 +4254,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantReturn](https://img.shields.io/badge/SwiftFormat-redundantReturn-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantReturn)
+  [![SwiftFormat: redundantReturn](https://img.shields.io/badge/SwiftFormat-redundantReturn-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantReturn)
 
   ```swift
   // WRONG
@@ -4229,7 +4366,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: anyObjectProtocol](https://img.shields.io/badge/SwiftFormat-anyObjectProtocol-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#anyobjectprotocol)
+  [![SwiftFormat: anyObjectProtocol](https://img.shields.io/badge/SwiftFormat-anyObjectProtocol-7B0051.svg)](https://swiftformat.info/rules/prerelease#anyobjectprotocol)
 
   #### Why?
 
@@ -4287,7 +4424,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantClosure](https://img.shields.io/badge/SwiftFormat-redundantClosure-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantClosure)
+  [![SwiftFormat: redundantClosure](https://img.shields.io/badge/SwiftFormat-redundantClosure-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantClosure)
 
   ```swift
   // WRONG
@@ -4321,7 +4458,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantGet](https://img.shields.io/badge/SwiftFormat-redundantGet-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantGet)
+  [![SwiftFormat: redundantGet](https://img.shields.io/badge/SwiftFormat-redundantGet-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantGet)
 
   ```swift
   // WRONG
@@ -4351,7 +4488,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include -->
 
-  [![SwiftFormat: opaqueGenericParameters](https://img.shields.io/badge/SwiftFormat-opaqueGenericParameters-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#opaqueGenericParameters)
+  [![SwiftFormat: opaqueGenericParameters](https://img.shields.io/badge/SwiftFormat-opaqueGenericParameters-7B0051.svg)](https://swiftformat.info/rules/prerelease#opaqueGenericParameters)
 
   #### Why?
 
@@ -4584,15 +4721,15 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
-- <a id='redundant-property'></a>(<a href='#redundant-property'>link</a>) **Avoid defining properties that are then returned immediately.** Instead, return the value directly.
+- <a id='redundant-variable'></a>(<a href='#redundant-variable'>link</a>) **Avoid defining variables that are then returned immediately.** Instead, return the value directly.
 
   <details>
 
-  [![SwiftFormat: redundantProperty](https://img.shields.io/badge/SwiftFormat-redundantProperty-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantProperty)
+  [![SwiftFormat: redundantVariable](https://img.shields.io/badge/SwiftFormat-redundantVariable-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantVariable)
 
   ### Why?
 
-  Property declarations that are immediately returned are typically redundant and unnecessary. Sometimes these are unintentionally created as the byproduct of refactoring. Cleaning them up automatically simplifies the code. In some cases this also results in the `return` keyword itself being unnecessary, further simplifying the code.
+  Variables that are immediately returned are typically redundant and unnecessary. Sometimes these are unintentionally created as the byproduct of refactoring. Cleaning them up automatically simplifies the code. In some cases this also results in the `return` keyword itself being unnecessary, further simplifying the code.
 
   ```swift
   // WRONG
@@ -4628,7 +4765,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include -->
 
-  [![SwiftFormat: redundantEquatable](https://img.shields.io/badge/SwiftFormat-redundantEquatable-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantEquatable)
+  [![SwiftFormat: redundantEquatable](https://img.shields.io/badge/SwiftFormat-redundantEquatable-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantEquatable)
 
   ### Why?
 
@@ -4698,7 +4835,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: void](https://img.shields.io/badge/SwiftFormat-void-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#void)
+  [![SwiftFormat: void](https://img.shields.io/badge/SwiftFormat-void-7B0051.svg)](https://swiftformat.info/rules/prerelease#void)
 
   ```swift
   // WRONG
@@ -4714,7 +4851,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: void](https://img.shields.io/badge/SwiftFormat-void-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#void)
+  [![SwiftFormat: void](https://img.shields.io/badge/SwiftFormat-void-7B0051.svg)](https://swiftformat.info/rules/prerelease#void)
 
   ```swift
   let completion: (Result<Void, Error>) -> Void
@@ -4728,31 +4865,13 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
-- <a id='count-where'></a>(<a href='#count-where'>link</a>) **Prefer using `count(where: { ... })` over `filter { ... }.count`**.
-
-  <details>
-
-  [![SwiftFormat: preferCountWhere](https://img.shields.io/badge/SwiftFormat-preferCountWhere-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#preferCountWhere)
-
-  Swift 6.0 ([finally!](https://forums.swift.org/t/accepted-again-se-0220-count-where/66659)) added a `count(where:)` method to the standard library. Prefer using the `count(where:)` method over using the `filter(_:)` method followed by a `count` call.
-
-  ```swift
-  // WRONG
-  let planetsWithMoons = planets.filter { !$0.moons.isEmpty }.count
-
-  // RIGHT
-  let planetsWithMoons = planets.count(where: { !$0.moons.isEmpty })
-  ```
-
-  </details>
-
 - <a id='url-macro'></a>(<a href='#url-macro'>link</a>) **If available in your project, prefer using a `#URL(_:)` macro instead of force-unwrapping `URL(string:)!` initializer**.
 
   <details>
 
   <!-- ai-skill-include -->
 
-  [![SwiftFormat: urlMacro](https://img.shields.io/badge/SwiftFormat-urlMacro-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#urlMacro)
+  [![SwiftFormat: urlMacro](https://img.shields.io/badge/SwiftFormat-urlMacro-7B0051.svg)](https://swiftformat.info/rules/prerelease#urlMacro)
 
   #### Why?
 
@@ -4931,11 +5050,11 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
 ## File Organization
 
-- <a id='alphabetize-and-deduplicate-imports'></a>(<a href='#alphabetize-and-deduplicate-imports'>link</a>) **Alphabetize and deduplicate module imports within a file.** Place all imports at the top of the file below the header comments. Do not add additional line breaks between import statements. Add a single empty line before the first import and after the last import.
+- <a id='alphabetize-and-deduplicate-imports'></a>(<a href='#alphabetize-and-deduplicate-imports'>link</a>) **Alphabetize and deduplicate module imports within a file.** Place all imports at the top of the file below the header comments. Add a single empty line before the first import and after the last import. Sort imports with attributes like `@testable` and `@_spi` last, alphabetized by the attribute name.
 
   <details>
 
-  [![SwiftFormat: sortedImports](https://img.shields.io/badge/SwiftFormat-sortedImports-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#sortedImports) [![SwiftFormat: duplicateImports](https://img.shields.io/badge/SwiftFormat-duplicateImports-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#duplicateImports)
+  [![SwiftFormat: sortedImports](https://img.shields.io/badge/SwiftFormat-sortedImports-7B0051.svg)](https://swiftformat.info/rules/prerelease#sortedImports) [![SwiftFormat: duplicateImports](https://img.shields.io/badge/SwiftFormat-duplicateImports-7B0051.svg)](https://swiftformat.info/rules/prerelease#duplicateImports)
 
   #### Why?
   - A standard organization method helps engineers more quickly determine which modules a file depends on.
@@ -4944,60 +5063,50 @@ _You can enable the following settings in Xcode by running [this script](https:/
   ```swift
   // WRONG
 
-  //  Copyright © 2018 Airbnb. All rights reserved.
-  //
-  import DLSPrimitives
-  import Constellation
-  import Constellation
-  import Epoxy
+  // Copyright © 2026 Airbnb. All rights reserved.
+
+  import SolarSystemFeature
+  import GalaxyUI
+  import GalaxyUI
+  import OrbitService
 
   import Foundation
 
   // RIGHT
 
-  //  Copyright © 2018 Airbnb. All rights reserved.
-  //
+  // Copyright © 2026 Airbnb. All rights reserved.
 
-  import Constellation
-  import DLSPrimitives
-  import Epoxy
   import Foundation
+  import GalaxyUI
+  import OrbitService
+  import SolarSystemFeature
   ```
-
-  _Exception: `@testable import` should be grouped after the regular import and separated by an empty line._
 
   ```swift
   // WRONG
 
-  //  Copyright © 2018 Airbnb. All rights reserved.
-  //
-
-  import DLSPrimitives
-  @testable import Epoxy
   import Foundation
-  import Nimble
-  import Quick
+  @testable import OrbitService
+  import SolarSystemFeature
+  @_spi(Internal) import GalaxyUI
+  import Testing
 
   // RIGHT
 
-  //  Copyright © 2018 Airbnb. All rights reserved.
-  //
-
-  import DLSPrimitives
   import Foundation
-  import Nimble
-  import Quick
-
-  @testable import Epoxy
+  import SolarSystemFeature
+  import Testing
+  @_spi(Internal) import GalaxyUI
+  @testable import OrbitService
   ```
 
   </details>
 
-- <a id='limit-consecutive-whitespace'></a><a id='limit-vertical-whitespace'></a>(<a href='#limit-consecutive-whitespace'>link</a>) **Limit consecutive whitespace to one blank line or space (excluding indentation).** Favor the following formatting guidelines over whitespace of varying heights or widths.
+- <a id='limit-consecutive-whitespace'></a><a id='limit-vertical-whitespace'></a>(<a href='#limit-consecutive-whitespace'>link</a>) **Limit consecutive whitespace to one blank line or space**, excluding indentation.
 
   <details>
 
-  [![SwiftFormat: consecutiveBlankLines](https://img.shields.io/badge/SwiftFormat-consecutiveBlankLines-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#consecutiveBlankLines) [![SwiftFormat: consecutiveSpaces](https://img.shields.io/badge/SwiftFormat-consecutiveSpaces-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#consecutiveSpaces)
+  [![SwiftFormat: consecutiveBlankLines](https://img.shields.io/badge/SwiftFormat-consecutiveBlankLines-7B0051.svg)](https://swiftformat.info/rules/prerelease#consecutiveBlankLines) [![SwiftFormat: consecutiveSpaces](https://img.shields.io/badge/SwiftFormat-consecutiveSpaces-7B0051.svg)](https://swiftformat.info/rules/prerelease#consecutiveSpaces)
 
   ```swift
   // WRONG
@@ -5028,7 +5137,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: linebreakAtEndOfFile](https://img.shields.io/badge/SwiftFormat-linebreakAtEndOfFile-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#linebreakatendoffile)
+  [![SwiftFormat: linebreakAtEndOfFile](https://img.shields.io/badge/SwiftFormat-linebreakAtEndOfFile-7B0051.svg)](https://swiftformat.info/rules/prerelease#linebreakatendoffile)
 
   </details>
 
@@ -5036,7 +5145,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: blankLinesBetweenScopes](https://img.shields.io/badge/SwiftFormat-blankLinesBetweenScopes-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#blankLinesBetweenScopes)
+  [![SwiftFormat: blankLinesBetweenScopes](https://img.shields.io/badge/SwiftFormat-blankLinesBetweenScopes-7B0051.svg)](https://swiftformat.info/rules/prerelease#blankLinesBetweenScopes)
 
   #### Why?
 
@@ -5085,11 +5194,11 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
-- <a id='no-blank-lines-at-start-or-end-of-non-type-scopes'></a>(<a href='#no-blank-lines-at-start-or-end-of-non-type-scopes'>link</a>) **Remove blank lines at the top and bottom of scopes**, excluding type bodies which can optionally include blank lines.
+- <a id='blank-line-at-start-or-end-of-scopes'></a>(<a href='#blank-line-at-start-or-end-of-scopes'>link</a>) **Omit blank lines at the top and bottom of scopes.** Include a blank line at the bottom of a type body if and only if it starts with a blank line.
 
   <details>
 
-  [![SwiftFormat: blankLinesAtStartOfScope](https://img.shields.io/badge/SwiftFormat-blankLinesAtStartOfScope-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#blankLinesAtStartOfScope) [![SwiftFormat: blankLinesAtEndOfScope](https://img.shields.io/badge/SwiftFormat-blankLinesAtEndOfScope-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#blankLinesAtEndOfScope)
+  [![SwiftFormat: blankLinesAtStartOfScope](https://img.shields.io/badge/SwiftFormat-blankLinesAtStartOfScope-7B0051.svg)](https://swiftformat.info/rules/prerelease#blankLinesAtStartOfScope) [![SwiftFormat: blankLinesAtEndOfScope](https://img.shields.io/badge/SwiftFormat-blankLinesAtEndOfScope-7B0051.svg)](https://swiftformat.info/rules/prerelease#blankLinesAtEndOfScope)
 
   ```swift
   // WRONG
@@ -5110,7 +5219,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
     }
   }
 
-  // Also fine!
+  // ALSO RIGHT
   class Planet {
 
     func terraform() {
@@ -5118,6 +5227,24 @@ _You can enable the following settings in Xcode by running [this script](https:/
       generateOceans()
     }
 
+  }
+
+  // WRONG: Not consistent
+  class Planet {
+    func terraform() {
+      generateAtmosphere()
+      generateOceans()
+    }
+
+  }
+
+  // WRONG: Not consistent
+  class Planet {
+
+    func terraform() {
+      generateAtmosphere()
+      generateOceans()
+    }
   }
   ```
 
@@ -5133,7 +5260,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: markTypes](https://img.shields.io/badge/SwiftFormat-markTypes-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#markTypes)
+  [![SwiftFormat: markTypes](https://img.shields.io/badge/SwiftFormat-markTypes-7B0051.svg)](https://swiftformat.info/rules/prerelease#markTypes)
 
   ```swift
   // MARK: - GalaxyView
@@ -5166,7 +5293,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: organizeDeclarations](https://img.shields.io/badge/SwiftFormat-organizeDeclarations-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#organizeDeclarations)
+  [![SwiftFormat: organizeDeclarations](https://img.shields.io/badge/SwiftFormat-organizeDeclarations-7B0051.svg)](https://swiftformat.info/rules/prerelease#organizeDeclarations)
 
   </details>
 
@@ -5184,7 +5311,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: organizeDeclarations](https://img.shields.io/badge/SwiftFormat-organizeDeclarations-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#organizeDeclarations)
+  [![SwiftFormat: organizeDeclarations](https://img.shields.io/badge/SwiftFormat-organizeDeclarations-7B0051.svg)](https://swiftformat.info/rules/prerelease#organizeDeclarations)
 
   Computed properties and properties with property observers should appear at the end of the set of declarations of the same kind. (e.g. instance properties.)
 
@@ -5307,7 +5434,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: organizeDeclarations](https://img.shields.io/badge/SwiftFormat-organizeDeclarations-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#organizeDeclarations)
+  [![SwiftFormat: organizeDeclarations](https://img.shields.io/badge/SwiftFormat-organizeDeclarations-7B0051.svg)](https://swiftformat.info/rules/prerelease#organizeDeclarations)
 
   ```swift
   // WRONG
@@ -5328,7 +5455,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: singlePropertyPerLine](https://img.shields.io/badge/SwiftFormat-singlePropertyPerLine-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#singlePropertyPerLine) [![SwiftFormat: wrapEnumCases](https://img.shields.io/badge/SwiftFormat-wrapEnumCases-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#wrapEnumCases)
+  [![SwiftFormat: singlePropertyPerLine](https://img.shields.io/badge/SwiftFormat-singlePropertyPerLine-7B0051.svg)](https://swiftformat.info/rules/prerelease#singlePropertyPerLine) [![SwiftFormat: wrapEnumCases](https://img.shields.io/badge/SwiftFormat-wrapEnumCases-7B0051.svg)](https://swiftformat.info/rules/prerelease#wrapEnumCases)
 
   #### Why?
   - Declarations that define a single property are much more common, and more idiomatic.
@@ -5377,7 +5504,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: not fully autocorrectable (e.g. have to preserve existing init parameter ordering to not break build) -->
 
-  [![SwiftFormat: redundantMemberwiseInit](https://img.shields.io/badge/SwiftFormat-redundantMemberwiseInit-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantMemberwiseInit)
+  [![SwiftFormat: redundantMemberwiseInit](https://img.shields.io/badge/SwiftFormat-redundantMemberwiseInit-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantMemberwiseInit)
 
   #### Why?
 
@@ -5447,7 +5574,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: environmentEntry](https://img.shields.io/badge/SwiftFormat-environmentEntry-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/develop/Rules.md#environmentEntry)
+  [![SwiftFormat: environmentEntry](https://img.shields.io/badge/SwiftFormat-environmentEntry-7B0051.svg)](https://swiftformat.info/rules/prerelease#environmentEntry)
 
   ### Why?
 
@@ -5478,7 +5605,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantViewBuilder](https://img.shields.io/badge/SwiftFormat-redundantViewBuilder-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantViewBuilder)
+  [![SwiftFormat: redundantViewBuilder](https://img.shields.io/badge/SwiftFormat-redundantViewBuilder-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantViewBuilder)
 
   #### Why?
 
@@ -5530,9 +5657,105 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
+- <a id='redundant-empty-view'></a>(<a href='#redundant-empty-view'>link</a>) **In SwiftUI view builders, omit redundant `else { EmptyView() }` branches.** An `if` statement without an `else` branch implicitly produces no content when the condition is false, making an explicit `else { EmptyView() }` unnecessary.
+
+  <details>
+
+  [![SwiftFormat: redundantEmptyView](https://img.shields.io/badge/SwiftFormat-redundantEmptyView-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantEmptyView)
+
+  ```swift
+  // WRONG
+  var body: some View {
+    if condition {
+      Text("Launch")
+    } else {
+      EmptyView()
+    }
+  }
+
+  // RIGHT
+  var body: some View {
+    if condition {
+      Text("Launch")
+    }
+  }
+  ```
+
+  </details>
+
+- <a id='redundant-swiftui-group'></a>(<a href='#redundant-swiftui-group'>link</a>) **Omit SwiftUI `Group` wrappers where redundant, and prefer `@ViewBuilder` over `Group` where equivalent.** Inside a `@ViewBuilder` context (like a `View.body` or a `@ViewBuilder` property), a `Group` that wraps the entire content and applies no modifiers is unnecessary and adds an extra layer of nesting.
+
+  <details>
+
+  [![SwiftFormat: redundantSwiftUIGroup](https://img.shields.io/badge/SwiftFormat-redundantSwiftUIGroup-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantSwiftUIGroup)
+
+  #### Why?
+
+  The body of a `View` is implicitly a `@ViewBuilder`, so a `Group` that wraps the entire body and has no modifiers applied to it is completely redundant. In a `@ViewBuilder` property, `Group` and `@ViewBuilder` are equivalent, but `@ViewBuilder` is more idiomatic and reduces nesting.
+
+  ```swift
+  // WRONG
+  struct SpacecraftView: View {
+    var body: some View {
+      Group {
+        Text("Voyager")
+        instruments
+      }
+    }
+
+    var instruments: some View {
+      Group {
+        Text("Altimeter")
+        Text("Gyroscope")
+      }
+    }
+  }
+
+  // RIGHT
+  struct SpacecraftView: View {
+    var body: some View {
+      Text("Voyager")
+      instruments
+    }
+
+    @ViewBuilder
+    var instruments: some View {
+      Text("Altimeter")
+      Text("Gyroscope")
+    }
+  }
+
+  // ALSO RIGHT: Group is not redundant when a modifier is applied to it
+  struct SpacecraftView: View {
+    var body: some View {
+      Group {
+        Text("Voyager")
+        instruments
+      }
+      .padding()
+    }
+  }
+  ```
+
+  </details>
+
 **[⬆ back to top](#table-of-contents)**
 
 ## Testing
+
+- <a id='prefer-swift-testing'></a>(<a href='#prefer-swift-testing'>link</a>) **Prefer [Swift Testing](https://developer.apple.com/documentation/testing) over XCTest for new test suites.**
+
+  <details>
+
+  <!-- ai-skill-include: not always autocorrectable -->
+
+  [![SwiftFormat: preferSwiftTesting](https://img.shields.io/badge/SwiftFormat-preferSwiftTesting-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferSwiftTesting)
+
+  #### Why?
+
+  Swift Testing is the modern replacement for XCTest.
+
+  </details>
 
 - <a id='swift-testing-test-case-names'></a>(<a href='#swift-testing-test-case-names'>link</a>) **In Swift Testing, name test cases as sentences using raw identifiers, rather than using lowerCamelCase.** Don't prefix test case names with "`test`". Use UpperCamelCase for test suite names. Always omit the display name string from the `@Test` or `@Suite` macro.
 
@@ -5540,7 +5763,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: generally autocorrectable, but still an important best practice -->
 
-  [![SwiftFormat: swiftTestingTestCaseNames](https://img.shields.io/badge/SwiftFormat-swiftTestingTestCaseNames-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#swiftTestingTestCaseNames)
+  [![SwiftFormat: swiftTestingTestCaseNames](https://img.shields.io/badge/SwiftFormat-swiftTestingTestCaseNames-7B0051.svg)](https://swiftformat.info/rules/prerelease#swiftTestingTestCaseNames)
 
   ### Why?
 
@@ -5585,7 +5808,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantSwiftTestingSuite](https://img.shields.io/badge/SwiftFormat-redundantSwiftTestingSuite-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantSwiftTestingSuite)
+  [![SwiftFormat: redundantSwiftTestingSuite](https://img.shields.io/badge/SwiftFormat-redundantSwiftTestingSuite-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantSwiftTestingSuite)
 
   ```swift
   import Testing
@@ -5613,13 +5836,75 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   </details>
 
+- <a id='prefer-struct-swift-testing-suites'></a>(<a href='#prefer-struct-swift-testing-suites'>link</a>) **Prefer defining Swift Testing suites as `struct`s.** Swift Testing instantiates the suite type once per test case, so suites rarely need reference semantics. Apple's [Swift Testing documentation](https://developer.apple.com/documentation/testing/organizingtests) uses a `struct` for every suite it shows.
+
+  <details>
+
+  [![SwiftFormat: preferStructSwiftTestingSuites](https://img.shields.io/badge/SwiftFormat-preferStructSwiftTestingSuites-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferStructSwiftTestingSuites)
+
+  ```swift
+  import Testing
+
+  // WRONG
+  final class SpaceshipTests {
+    @Test
+    func `warp drive enables FTL travel`() { ... }
+  }
+
+  // RIGHT
+  struct SpaceshipTests {
+    @Test
+    func `warp drive enables FTL travel`() { ... }
+  }
+  ```
+
+  </details>
+
+- <a id='avoid-redundant-expectation-comments'></a>(<a href='#avoid-redundant-expectation-comments'>link</a>) **In Swift Testing, avoid expectation message strings that restate the expectation without adding additional context.** Unlike `XCTAssert`, the Swift Testing `#expect` macro generates detailed failure messages that include the expectation condition.
+
+  <details>
+
+  ```swift
+  // WRONG: Restates what #expect already reports in failure output
+  @Test
+  func `engage warp drive`() {
+    spaceship.engageWarpDrive()
+    #expect(spaceship.isWarpDriveActive, "Warp drive should be active")
+    #expect(spaceship.speed > lightSpeed, "Speed should be greater than light speed")
+  }
+
+  // RIGHT: Omits the message string, or adds valuable context
+  @Test
+  func `engage warp drive`() {
+    spaceship.engageWarpDrive()
+    #expect(spaceship.isWarpDriveActive)
+    #expect(spaceship.speed > lightSpeed, "Spaceship must reach light speed before the warp bubble can form")
+  }
+  ```
+
+  Code comments also work well to add additional context:
+
+  ```swift
+  // ALSO RIGHT
+  @Test
+  func `engage warp drive`() {
+    spaceship.engageWarpDrive()
+    #expect(spaceship.isWarpDriveActive)
+
+    // Spaceship must reach light speed before the warp bubble can form
+    #expect(spaceship.speed > lightSpeed)
+  }
+  ```
+
+  </details>
+
 - <a id='avoid-guard-in-tests'></a>(<a href='#avoid-guard-in-tests'>link</a>) **Avoid `guard` statements in unit tests**. XCTest and Swift Testing have APIs for unwrapping an optional and failing the test, which are much simpler than unwrapping the optionals yourself. Use assertions instead of guarding on boolean conditions.
 
   <details>
 
   <!-- ai-skill-include: not fully autocorrectable -->
 
-  [![SwiftFormat: noGuardInTests](https://img.shields.io/badge/SwiftFormat-noGuardInTests-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#noGuardInTests)
+  [![SwiftFormat: noGuardInTests](https://img.shields.io/badge/SwiftFormat-noGuardInTests-7B0051.svg)](https://swiftformat.info/rules/prerelease#noGuardInTests)
 
   ```swift
   import XCTest
@@ -5646,13 +5931,34 @@ _You can enable the following settings in Xcode by running [this script](https:/
     @Test
     func something() throws {
       // WRONG:
-      guard let value = optionalValue, value.matchesCondition {
+      guard let value = optionalValue, value.matchesCondition else {
         return
       }
 
       // RIGHT:
       let value = try #require(optionalValue)
-      #expect(value.matchesCondition)
+      try #require(value.matchesCondition)
+    }
+  }
+  ```
+
+  The same applies to an `if` statement used like a `guard`, where the `if` is the last statement in the test:
+
+  ```swift
+  import Testing
+
+  struct SomeTests {
+    @Test
+    func something() throws {
+      // WRONG:
+      if let value = optionalValue, value.matchesCondition {
+        #expect(value.isValid)
+      }
+
+      // RIGHT:
+      let value = try #require(optionalValue)
+      try #require(value.matchesCondition)
+      #expect(value.isValid)
     }
   }
   ```
@@ -5663,7 +5969,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: noForceTryInTests](https://img.shields.io/badge/SwiftFormat-noForceTryInTests-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#noForceTryInTests)
+  [![SwiftFormat: noForceTryInTests](https://img.shields.io/badge/SwiftFormat-noForceTryInTests-7B0051.svg)](https://swiftformat.info/rules/prerelease#noForceTryInTests)
 
   ```swift
   import XCTest
@@ -5707,7 +6013,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: not fully autocorrectable -->
 
-  [![SwiftFormat: testSuiteAccessControl](https://img.shields.io/badge/SwiftFormat-testSuiteAccessControl-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#testSuiteAccessControl)
+  [![SwiftFormat: testSuiteAccessControl](https://img.shields.io/badge/SwiftFormat-testSuiteAccessControl-7B0051.svg)](https://swiftformat.info/rules/prerelease#testSuiteAccessControl)
 
   #### Why?
 
@@ -5801,7 +6107,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <!-- ai-skill-include: not fully autocorrectable -->
 
-  [![SwiftFormat: noForceUnwrapInTests](https://img.shields.io/badge/SwiftFormat-noForceUnwrapInTests-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#noForceUnwrapInTests)
+  [![SwiftFormat: noForceUnwrapInTests](https://img.shields.io/badge/SwiftFormat-noForceUnwrapInTests-7B0051.svg)](https://swiftformat.info/rules/prerelease#noForceUnwrapInTests)
 
   ```swift
   import XCTest
@@ -5863,7 +6169,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
   <details>
 
-  [![SwiftFormat: redundantThrows](https://img.shields.io/badge/SwiftFormat-redundantThrows-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantThrows) [![SwiftFormat: redundantAsync](https://img.shields.io/badge/SwiftFormat-redundantAsync-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/main/Rules.md#redundantAsync)
+  [![SwiftFormat: redundantThrows](https://img.shields.io/badge/SwiftFormat-redundantThrows-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantThrows) [![SwiftFormat: redundantAsync](https://img.shields.io/badge/SwiftFormat-redundantAsync-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantAsync)
 
   ```swift
   import XCTest
@@ -5902,6 +6208,323 @@ _You can enable the following settings in Xcode by running [this script](https:/
     }
   }
   ```
+
+  </details>
+
+- <a id='avoid-extended-lifetime-in-tests'></a>(<a href='#avoid-extended-lifetime-in-tests'>link</a>) **Avoid using `withExtendedLifetime` in unit tests**. It usually has no effect on runtime behavior, since a variable declared in a function scope is never deallocated before the end of that scope. `withExtendedLifetime` is permitted in cases where the variable would otherwise cause an "unused variable" warning.
+
+  <details>
+
+  [![SwiftFormat: redundantExtendedLifetime](https://img.shields.io/badge/SwiftFormat-redundantExtendedLifetime-7B0051.svg)](https://swiftformat.info/rules/prerelease#redundantExtendedLifetime)
+
+  ```swift
+  // WRONG
+  @Test
+  func `telescope tracks target`() {
+    let observatory = Observatory()
+    let telescope = observatory.veryLargeTelescope()
+
+    telescope.track(.mars)
+    #expect(telescope.isTracking)
+
+    // Ensure the observatory isn't deallocated before we finish our observation
+    withExtendedLifetime(observatory) { }
+
+    // Also wrong / redundant: underscored assignment is often used for the same purpose as `withExtendedLifetime`
+    _ = observatory
+  }
+
+  // RIGHT
+  @Test
+  func `telescope tracks target`() {
+    let observatory = Observatory()
+    let telescope = observatory.veryLargeTelescope()
+
+    telescope.track(.mars)
+    #expect(telescope.isTracking)
+  }
+
+  // ALSO RIGHT. Without `withExtendedLifetime`, `cancellable` would cause an "unused variable" warning.
+  @Test
+  func `telescope publishes target updates`() {
+    let telescope = Telescope()
+    var publishedTarget: Planet?
+    let cancellable = telescope.targetPublisher.sink { publishedTarget = $0 }
+
+    telescope.track(.mars)
+    #expect(publishedTarget == .mars)
+
+    withExtendedLifetime(cancellable) { }
+  }
+  ```
+
+  </details>
+
+**[⬆ back to top](#table-of-contents)**
+
+## Performance
+
+- <a id='count-where'></a>(<a href='#count-where'>link</a>) **Prefer using `count(where: { ... })` over `filter { ... }.count`**.
+
+  <details>
+
+  <!-- ai-skill-include: generally autocorrectable, but still an important best practice -->
+
+  [![SwiftFormat: preferCountWhere](https://img.shields.io/badge/SwiftFormat-preferCountWhere-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferCountWhere)
+
+  Swift 6.0 ([finally!](https://forums.swift.org/t/accepted-again-se-0220-count-where/66659)) added a `count(where:)` method to the standard library. Prefer using the `count(where:)` method over using the `filter(_:)` method followed by a `count` call.
+
+  ```swift
+  // WRONG
+  let planetsWithMoons = planets.filter { !$0.moons.isEmpty }.count
+
+  // RIGHT
+  let planetsWithMoons = planets.count(where: { !$0.moons.isEmpty })
+  ```
+
+  </details>
+
+- <a id='is-empty'></a>(<a href='#is-empty'>link</a>) **Prefer using `isEmpty` over comparing `count` against zero**.
+
+  <details>
+
+  <!-- ai-skill-include: generally autocorrectable, but still an important best practice -->
+
+  [![SwiftFormat: isEmpty](https://img.shields.io/badge/SwiftFormat-isEmpty-7B0051.svg)](https://swiftformat.info/rules/prerelease#isEmpty)
+
+  #### Why?
+
+  `isEmpty` states the intent directly and, unlike `count`, is guaranteed to be O(1) for every `Collection` (computing `count` can be O(n) for types like `String` or lazy sequences). Checking emptiness by comparing `count` against zero is both less clear and potentially slower.
+
+  ```swift
+  // WRONG
+  if array.count == 0 { ... }
+  if array.count > 0 { ... }
+
+  // RIGHT
+  if array.isEmpty { ... }
+  if !array.isEmpty { ... }
+  ```
+
+  </details>
+
+- <a id='prefer-flatmap'></a>(<a href='#prefer-flatmap'>link</a>) **Prefer using `flatMap { ... }` over `map { ... }.reduce([], +)`**.
+
+  <details>
+
+  <!-- ai-skill-include: generally autocorrectable, but still an important best practice -->
+
+  [![SwiftFormat: preferFlatMap](https://img.shields.io/badge/SwiftFormat-preferFlatMap-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferFlatMap)
+
+  #### Why?
+
+  `map { ... }.reduce([], +)` builds an intermediate array of arrays and then flattens it by repeated concatenation, reallocating on each `+`. `flatMap { ... }` produces the same result directly, avoids the intermediate allocations, and reads more clearly.
+
+  ```swift
+  // WRONG
+  let allItems = sections.map { $0.items }.reduce([], +)
+
+  // RIGHT
+  let allItems = sections.flatMap { $0.items }
+  ```
+
+  </details>
+
+- <a id='prefer-contains'></a>(<a href='#prefer-contains'>link</a>) **Prefer using `contains` over `filter(_:).isEmpty`, `first(where:) != nil`, and `range(of:) != nil`**.
+
+  <details>
+
+  <!-- ai-skill-include: generally autocorrectable, but still an important best practice -->
+
+  [![SwiftFormat: preferContains](https://img.shields.io/badge/SwiftFormat-preferContains-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferContains)
+
+  #### Why?
+
+  Each of these patterns builds or finds something only to discard it and test for membership. `contains` expresses that membership check directly, short-circuits at the first match, and reads more clearly. The negated forms (`== nil`, or a `!`-prefixed `.isEmpty`) reconcile to `!contains` / `contains`.
+
+  ```swift
+  // WRONG
+  if messages.filter({ $0.isUnread }).isEmpty { ... }
+  let hasUnread = !messages.filter { $0.isUnread }.isEmpty
+  if items.first(where: { $0.isActive }) != nil { ... }
+  if items.firstIndex(where: { $0.isActive }) == nil { ... }
+  if text.range(of: "needle") != nil { ... }
+
+  // RIGHT
+  if !messages.contains(where: { $0.isUnread }) { ... }
+  let hasUnread = messages.contains(where: { $0.isUnread })
+  if items.contains(where: { $0.isActive }) { ... }
+  if !items.contains(where: { $0.isActive }) { ... }
+  if text.contains("needle") { ... }
+  ```
+
+  </details>
+
+- <a id='prefer-first-where'></a>(<a href='#prefer-first-where'>link</a>) **Prefer using `first(where: { ... })` over `filter { ... }.first`**.
+
+  <details>
+
+  <!-- ai-skill-include: generally autocorrectable, but still an important best practice -->
+
+  [![SwiftFormat: preferFirstWhere](https://img.shields.io/badge/SwiftFormat-preferFirstWhere-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferFirstWhere)
+
+  #### Why?
+
+  `filter { ... }.first` builds a filtered collection just to take its first element. `first(where:)` finds that element directly and stops at the first match.
+
+  ```swift
+  // WRONG
+  let firstActive = items.filter { $0.isActive }.first
+
+  // RIGHT
+  let firstActive = items.first(where: { $0.isActive })
+  ```
+
+  </details>
+
+- <a id='prefer-min-over-sorted'></a>(<a href='#prefer-min-over-sorted'>link</a>) **Prefer using `min()` over `sorted().first`**.
+
+  <details>
+
+  <!-- ai-skill-include: generally autocorrectable, but still an important best practice -->
+
+  [![SwiftFormat: preferMinOverSorted](https://img.shields.io/badge/SwiftFormat-preferMinOverSorted-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferMinOverSorted)
+
+  #### Why?
+
+  `sorted().first` sorts the entire sequence — `O(n log n)` plus a full copy — just to take the smallest element. `min()` finds it in a single `O(n)` pass with no allocation. `sorted(by:).first` likewise becomes `min(by:)`.
+
+  ```swift
+  // WRONG
+  let smallest = values.sorted().first
+  let earliest = events.sorted(by: { $0.date < $1.date }).first
+
+  // RIGHT
+  let smallest = values.min()
+  let earliest = events.min(by: { $0.date < $1.date })
+  ```
+
+  </details>
+
+- <a id='prefer-lazy-map'></a>(<a href='#prefer-lazy-map'>link</a>) **Prefer `lazy.map` over `map` when the chain reduces to a single result (`joined(separator:)`, `min`, `max`, `reduce`, `contains`, etc)**.
+
+  <details>
+
+  <!-- ai-skill-include: generally autocorrectable, but still an important best practice -->
+
+  [![SwiftFormat: preferLazyMap](https://img.shields.io/badge/SwiftFormat-preferLazyMap-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferLazyMap)
+
+  #### Why?
+
+  `map` allocates an array of every transformed element. When that array only exists to be reduced to one value, the allocation is pure waste — `lazy.map` transforms each element as the reducing operation reaches it, and nothing is stored.
+
+  ```swift
+  // WRONG
+  let names = users.map { $0.name }.joined(separator: ", ")
+  let minY = vertices.map { $0.y }.min()
+
+  // RIGHT
+  let names = users.lazy.map { $0.name }.joined(separator: ", ")
+  let minY = vertices.lazy.map { $0.y }.min()
+  ```
+
+  This applies to any operation that turns the sequence into a single value: `joined(separator:)`, `min`, `max`, `reduce`, and also `contains`, `allSatisfy`, and `first(where:)`, which stop as soon as they have an answer. It does not apply to an operation that produces another sequence, like `filter` or `sorted()`, since the transformed elements are needed more than once — or, in `sorted()`'s case, have to be materialized anyway.
+
+  When the operation takes a predicate, folding the transform into that predicate is better still, because then there is no `map` to make lazy:
+
+  ```swift
+  // WRONG
+  let hasEmpty = rows.map { $0.title }.contains(where: { $0.isEmpty })
+
+  // RIGHT
+  let hasEmpty = rows.contains(where: { $0.title.isEmpty })
+  ```
+
+  </details>
+
+**[⬆ back to top](#table-of-contents)**
+
+## Apple Frameworks
+
+- <a id='favor-constructors'></a>(<a href='#favor-constructors'>link</a>) **Use constructors instead of Make() functions for NSRange and others.**
+
+  <details>
+
+  [![SwiftLint: legacy_constructor](https://img.shields.io/badge/SwiftLint-legacy__constructor-007A87.svg)](https://realm.github.io/SwiftLint/legacy_constructor.html)
+
+  ```swift
+  // WRONG
+  let range = NSMakeRange(10, 5)
+
+  // RIGHT
+  let range = NSRange(location: 10, length: 5)
+  ```
+
+  </details>
+
+* <a id='cifilter-builtins'></a>(<a href='#cifilter-builtins'>link</a>) **Prefer CIFilter's typed factory methods (via `CIFilterBuiltins`) over the string-based `CIFilter(name:)` initializer and KVO `setValue(_:forKey:)`.**
+
+  <details>
+
+  #### Why?
+
+  The typed factory methods introduced in iOS 14 (`import CoreImage.CIFilterBuiltins`) return non-optional, concrete filter objects with strongly-typed properties. This eliminates:
+
+  - The failable `CIFilter(name:)` initializer, which returns `nil` for typos and requires a `guard`/`if-let`.
+  - `setValue(_:forKey:)` calls that accept `Any?` and crash at runtime on wrong types or misspelled keys.
+
+  Using the built-in protocol conformances gives you compile-time type safety and autocompletion for every parameter.
+
+  > **Note:** You must add `import CoreImage.CIFilterBuiltins` (a submodule import) to access the factory methods, as it's not included in the general `CoreImage` header.
+
+  ```swift
+  // WRONG
+  import CoreImage
+
+  guard
+    let kMeansFilter = CIFilter(name: "CIKMeans")
+  else { return nil }
+
+  kMeansFilter.setValue(ciImage, forKey: kCIInputImageKey)
+  kMeansFilter.setValue(CIVector(cgRect: ciImage.extent), forKey: "inputExtent")
+  kMeansFilter.setValue(1, forKey: "inputCount")
+  kMeansFilter.setValue(5, forKey: "inputPasses")
+  ```
+
+  ```swift
+  // RIGHT
+  import CoreImage.CIFilterBuiltins
+
+  let kMeansFilter = CIFilter.kMeans()
+  kMeansFilter.inputImage = ciImage
+  kMeansFilter.extent = CIVector(cgRect: ciImage.extent)
+  kMeansFilter.count = 1
+  kMeansFilter.passes = 5
+  ```
+
+  </details>
+
+- <a id='prefer-swift-string-api'></a>(<a href='#prefer-swift-string-api'>link</a>) **Prefer the standard library `String` `replacing(_:with:)` API over Foundation's `replacingOccurrences(of:with:)`**.
+
+  <details>
+
+  [![SwiftFormat: preferSwiftStringAPI](https://img.shields.io/badge/SwiftFormat-preferSwiftStringAPI-7B0051.svg)](https://swiftformat.info/rules/prerelease#preferSwiftStringAPI)
+
+  #### Why?
+
+  `replacingOccurrences(of:with:)` is an `NSString` method surfaced on `String` by Foundation. `replacing(_:with:)` is the modern replacement in the Swift standard library.
+
+  ```swift
+  // WRONG
+  let callSign = spaceshipName.replacingOccurrences(of: " ", with: "-")
+
+  // RIGHT
+  let callSign = spaceshipName.replacing(" ", with: "-")
+  ```
+
+  Only the two-argument `of:with:` form has a equivalent in the standard library. The `options:` and `range:` overloads (`.caseInsensitive`, `.regularExpression`, and friends) have no direct counterpart, so leave those as they are.
+
+  One behavioral difference to watch for when making this change by hand: an empty search string is a no-op in `replacingOccurrences(of: "", with: "-")`, but `"abc".replacing("", with: "-")` returns `"-a-b-c-"`.
 
   </details>
 
@@ -5970,7 +6593,7 @@ _You can enable the following settings in Xcode by running [this script](https:/
 
 ## Xcode Formatting
 
-_You can enable the following settings in Xcode by running [this script](resources/xcode_settings_slumber_group.bash), e.g. as part of a "Run Script" build phase._
+_You can enable the following settings in Xcode by running [this script](https://github.com/slumberGroup/swift/blob/master/resources/xcode_settings_slumber_group.bash), e.g. as part of a "Run Script" build phase._
 
 * <a id='130-column-width'></a>(<a href='#130-column-width'>link</a>) **Each line should have a maximum column width of 130 characters.**
 

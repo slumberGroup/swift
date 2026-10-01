@@ -12,9 +12,16 @@ RSpec.describe SiteContent do
 
     # Relative file URLs resolve differently on github.com/airbnb/swift vs swift.airbnb.tech
     it 'does not use relative URLs' do
-      # Match markdown links that don't start with # or https
-      relative_links = readme_content.scan(/\]\((?!#|https)([^)]+)\)/).flatten
+      # Match markdown links that don't start with # or http(s)
+      relative_links = readme_content.scan(/\]\((?!#|https?:)([^)]+)\)/).flatten
       expect(relative_links).to be_empty, "Found relative links: #{relative_links.join(', ')}"
+    end
+
+    it 'has all rule descriptions include a bolded portion' do
+      rule_lines = readme_content.lines.map(&:chomp).select { |line| line.match?(/^- <a id='/) }
+      rules_without_bold = rule_lines.reject { |line| line.include?('**') }
+      expect(rules_without_bold).to be_empty,
+        "Found rule descriptions without bold text:\n#{rules_without_bold.join("\n")}"
     end
   end
 
@@ -41,6 +48,30 @@ RSpec.describe SiteContent do
 
     it 'includes Table of Contents section' do
       expect(index_content).to include('## Table of Contents')
+    end
+
+    it 'has the expected ordered list of markdown headers' do
+      headers = index_content.lines.map(&:chomp).grep(/^#+ /)
+      expect(headers).to eq [
+        '# Airbnb Swift Style Guide',
+        '## Goals',
+        '## Guiding Tenets',
+        '## Table of Contents',
+        '## Xcode Formatting',
+        '## Naming',
+        '## Style',
+        '### Functions',
+        '### Closures',
+        '### Operators',
+        '## Patterns',
+        '## File Organization',
+        '## SwiftUI',
+        '## Testing',
+        '## Performance',
+        '## Apple Frameworks',
+        # SG: Slumber Group's Xcode Formatting overrides (4-space indent, 130 columns) follow the Airbnb sections
+        '## Xcode Formatting',
+      ]
     end
 
     it 'has no invalid anchor links' do
