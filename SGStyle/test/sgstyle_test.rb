@@ -410,6 +410,49 @@ class SGStyleTest < Minitest::Test
     assert_includes out + err, 'Linting Swift files in current working directory'
   end
 
+  # MARK: --allow-warnings
+
+  def test_allow_warnings_runs_swiftlint_without_strict_and_swiftformat_still_lints
+    run_script('lint', '--allow-warnings', '--paths', 'SGCommon')
+
+    refute_includes calls(@lint_log).fetch(0), '--strict'
+    assert_includes calls(@lint_log).fetch(0), 'SGCommon'
+    assert_includes calls(@format_log).fetch(0), '--lint'
+  end
+
+  def test_allow_warnings_is_accepted_before_or_after_the_paths_marker_position
+    _out, _err, status = run_script('lint', '--allow-warnings')
+
+    assert_equal 0, status.exitstatus
+    assert_equal ['.'], calls(@lint_log).fetch(0).last(1)
+  end
+
+  def test_allow_warnings_still_fails_on_swiftlint_errors_and_configuration_problems
+    _out, _err, error_status = run_script('lint', '--allow-warnings', env: { 'FAKE_SWIFTLINT_EXIT' => '2' })
+    out, err, config_status = run_script('lint', '--allow-warnings',
+                                         env: { 'FAKE_SWIFTLINT_OUTPUT' => "warning: 'x' is not a valid rule identifier" })
+
+    refute_equal 0, error_status.exitstatus
+    refute_equal 0, config_status.exitstatus
+    assert_match(/configuration problem/, out + err)
+  end
+
+  def test_allow_warnings_still_fails_on_swiftformat_findings
+    _out, _err, status = run_script('lint', '--allow-warnings', env: { 'FAKE_SWIFTFORMAT_EXIT' => '1' })
+
+    refute_equal 0, status.exitstatus
+  end
+
+  def test_unknown_option_and_format_with_allow_warnings_are_usage_errors
+    [['lint', '--nope'], ['format', '--allow-warnings']].each do |args|
+      out, err, status = run_script(*args)
+
+      assert_equal 64, status.exitstatus, "expected usage error for #{args.inspect}"
+      assert_match(/usage/i, out + err)
+      assert_empty calls(@format_log), 'no tool may run on a usage error'
+    end
+  end
+
   def test_script_never_touches_the_network
     source = File.read(SCRIPT)
 

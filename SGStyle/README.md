@@ -26,6 +26,9 @@ ruby "${PODS_ROOT}/SGStyle/SGStyle/sgstyle.rb" lint --paths MyApp MyAppTests
 - `format` rewrites files.
 - `lint` runs `swiftformat --lint` and `swiftlint --strict`, changes nothing, and exits non-zero on any finding. Both tools
   always run, so one invocation reports everything.
+- `lint --allow-warnings` drops `--strict` so SwiftLint's warning-level rules (for example `no_direct_standard_out_logs`, which
+  the rules keep at warning so a debug `print` does not break a build) stay warnings. Use it for local builds and keep the
+  strict form for CI. SwiftLint errors, SwiftFormat findings and ruleset configuration problems still fail.
 - `--paths` defaults to the repo root. `SRCROOT` (default: the current directory) is the repo root and `PODS_ROOT`
   (default: the directory that contains the pod) is the `Pods` directory.
 - A missing tool or rules file exits with code 2; a tool that fails prints an `error: SGStyle: ...` line that Xcode parses.

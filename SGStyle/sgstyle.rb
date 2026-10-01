@@ -5,9 +5,11 @@
 # using the rules that ship inside the pod.
 #
 #   ruby ${PODS_ROOT}/SGStyle/SGStyle/sgstyle.rb format [--paths DIR...]
-#   ruby ${PODS_ROOT}/SGStyle/SGStyle/sgstyle.rb lint   [--paths DIR...]
+#   ruby ${PODS_ROOT}/SGStyle/SGStyle/sgstyle.rb lint   [--allow-warnings] [--paths DIR...]
 #
-# `format` rewrites files. `lint` changes nothing and exits non-zero on any finding.
+# `format` rewrites files. `lint` changes nothing and exits non-zero on any finding. SwiftLint runs with
+# `--strict`, so its warning-level rules fail too; `--allow-warnings` drops `--strict` for local builds where a
+# warning should stay a warning. Errors, SwiftFormat findings and configuration problems still fail.
 #
 # Environment:
 #   SRCROOT    the client repo root (default: the current directory)
@@ -26,7 +28,7 @@ require 'open3'
 require 'tempfile'
 
 module SGStyle
-  USAGE = 'usage: sgstyle.rb (format|lint) [--paths PATH...]'
+  USAGE = 'usage: sgstyle.rb format [--paths PATH...] | sgstyle.rb lint [--allow-warnings] [--paths PATH...]'
   EXIT_USAGE = 64
   EXIT_MISSING = 2
   FIXED_EXCLUDES = ['Pods', '**/Generated'].freeze
@@ -124,12 +126,12 @@ module SGStyle
        .sort
   end
 
-  def self.swiftlint_arguments(env, rules, scope_config, paths)
+  def self.swiftlint_arguments(env, rules, scope_config, paths, strict:)
     arguments = ['lint', '--config', rules]
     child = env.override('swiftlint_childconfig.yml')
     arguments.push('--config', File.realpath(child)) if File.file?(child)
     arguments.push('--config', scope_config)
-    arguments + ['--strict', '--quiet', *paths]
+    arguments + [*('--strict' if strict), '--quiet', *paths]
   end
 
   def self.with_swiftlint_scope_config(env)
@@ -184,7 +186,7 @@ module SGStyle
 
   # Both tools always run so a single invocation reports every finding. Every file and override is validated
   # before either tool starts.
-  def self.lint(env, paths)
+  def self.lint(env, paths, allow_warnings: false)
     swiftformat = require_file(env.swiftformat)
     swiftlint = require_file(env.swiftlint)
     format_rules = require_file(env.rules('airbnb.swiftformat'))
@@ -194,20 +196,26 @@ module SGStyle
     with_swiftlint_scope_config(env) do |scope_config|
       results = [
         run_tool('swiftformat --lint', swiftformat, format_arguments),
-        run_tool_checking_output('swiftlint --strict', swiftlint, swiftlint_arguments(env, lint_rules, scope_config, paths),
+        run_tool_checking_output(allow_warnings ? 'swiftlint' : 'swiftlint --strict', swiftlint,
+                                 swiftlint_arguments(env, lint_rules, scope_config, paths, strict: !allow_warnings),
                                  SWIFTLINT_CONFIG_PROBLEM)
       ]
       results.all? ? 0 : 1
     end
   end
 
+  # Returns [command, paths, options] or nil when the arguments are not valid.
   def self.parse(argv)
     command = argv.first
     return nil unless %w[format lint].include?(command)
 
     marker = argv.index('--paths')
+    options = argv[1...(marker || argv.length)]
+    allowed = command == 'lint' ? ['--allow-warnings'] : []
+    return nil unless (options - allowed).empty?
+
     paths = marker ? argv[(marker + 1)..] : []
-    [command, paths.empty? ? ['.'] : paths]
+    [command, paths.empty? ? ['.'] : paths, { allow_warnings: options.include?('--allow-warnings') }]
   end
 
   def self.main(argv)
@@ -217,10 +225,10 @@ module SGStyle
       return EXIT_USAGE
     end
 
-    command, paths = parsed
+    command, paths, options = parsed
     env = environment
     Dir.chdir(env.root)
-    public_send(command, env, paths)
+    command == 'lint' ? lint(env, paths, **options) : format(env, paths)
   rescue MissingFile => e
     report("missing #{e.message}. Run `pod install` so the SGStyle, SwiftFormat and SwiftLint pods are present.")
     EXIT_MISSING
