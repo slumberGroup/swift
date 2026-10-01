@@ -1,0 +1,11 @@
+# Installs SGStyle the way a client does: from a git commit, with the two tools listed Debug-only.
+# SGSTYLE_REPO and SGSTYLE_COMMIT are required; a missing value raises instead of falling back.
+install! 'cocoapods', :integrate_targets => false
+platform :ios, '15.0'
+
+target 'Fixture' do
+  pod 'SwiftFormat/CLI', :configurations => ['Debug']
+  pod 'SwiftLint', :configurations => ['Debug']
+  pod 'SGStyle', :git => "file://#{ENV.fetch('SGSTYLE_REPO')}", :commit => ENV.fetch('SGSTYLE_COMMIT'),
+                 :configurations => ['Debug']
+end

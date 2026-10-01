@@ -1,0 +1,23 @@
+name: SGStyle
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  sgstyle:
+    name: SGStyle pod
+    runs-on: macos-15
+    steps:
+      # Full history so the fixture can install the pod from this exact commit with a file:// git source.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Script unit tests
+        run: ruby SGStyle/test/sgstyle_test.rb
+      - name: Lint podspec
+        run: pod lib lint SGStyle.podspec --allow-warnings
+      - name: Install the pod and run its tools on the fixtures
+        run: sh SGStyle/.fixture/run.sh
