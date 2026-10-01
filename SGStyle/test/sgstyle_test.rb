@@ -42,16 +42,20 @@ class SGStyleTest < Minitest::Test
     FileUtils.mkdir_p(File.dirname(path))
     File.write(path, <<~SH)
       #!/bin/sh
-      for arg in "$@"; do printf '%s\\n' "$arg"; done >> "#{log_path}"
+      for arg in "$@"; do
+        printf '%s\\n' "$arg" >> "#{log_path}"
+        case "$arg" in *.yml) [ -f "$arg" ] && { printf '=== %s\\n' "$arg"; cat "$arg"; } >> "#{log_path}.configs" ;; esac
+      done
+      printf '%s\\n' "$PWD" > "#{log_path}.cwd"
       printf -- '--- end of call\\n' >> "#{log_path}"
       exit "${#{exit_var}:-0}"
     SH
     File.chmod(0o755, path)
   end
 
-  def run_script(*args, env: {})
+  def run_script(*args, env: {}, chdir: @project, ruby: 'ruby')
     full_env = { 'SRCROOT' => @project }.merge(env)
-    Open3.capture3(full_env, 'ruby', @script, *args, chdir: @project)
+    Open3.capture3(full_env, ruby, @script, *args, chdir: chdir)
   end
 
   def calls(log_path)
@@ -101,10 +105,9 @@ class SGStyleTest < Minitest::Test
     assert_includes pairs, ['--exclude', 'SGCommon/BugsnagLogging/CWLDemangle.swift']
   end
 
-  def test_override_files_ignore_comment_lines_and_non_rule_tokens
+  def test_override_files_ignore_comment_lines
     scripts = File.join(@project, 'BuildScripts')
-    File.write(File.join(scripts, 'SwiftFormatExtraEnables.txt'),
-               "# prepend rules with --two dashes\nplainword\n--realRule extra\n")
+    File.write(File.join(scripts, 'SwiftFormatExtraEnables.txt'), "# prepend rules with --two dashes\n--realRule\n")
 
     run_script('format')
     argv = calls(@format_log).fetch(0)
@@ -137,8 +140,7 @@ class SGStyleTest < Minitest::Test
     run_script('lint')
     with = calls(@lint_log).fetch(0)
 
-    assert_equal 1, without
-    assert_equal 2, with.count('--config')
+    assert_equal without + 1, with.count('--config')
     assert_includes with, File.realpath(child)
   end
 
@@ -222,6 +224,154 @@ class SGStyleTest < Minitest::Test
 
     assert_equal 0, status.exitstatus
     assert_equal 1, calls(@format_log).length
+  end
+
+  # MARK: override file strictness
+
+  def write_enables(content)
+    File.write(File.join(@project, 'BuildScripts', 'SwiftFormatExtraEnables.txt'), content)
+  end
+
+  def test_unrecognized_override_tokens_are_errors_not_silently_dropped
+    ["--isEmpty,\n", "\u2014isEmpty\n", "--isEmpty#why\n", "isEmpty\n"].each do |content|
+      FileUtils.rm_f(@format_log)
+      write_enables(content)
+
+      out, err, status = run_script('lint')
+
+      assert_equal 2, status.exitstatus, "expected exit 2 for #{content.inspect}"
+      assert_match(/^error: SGStyle: .*SwiftFormatExtraEnables\.txt:1: unrecognized .*#{Regexp.escape(content.split.first)}/, out + err)
+      assert_empty calls(@format_log), 'no tool may run when an override file is malformed'
+    end
+  end
+
+  def test_inline_comment_after_a_rule_is_allowed
+    write_enables("--isEmpty # opt-in rule\n")
+
+    _out, _err, status = run_script('format')
+
+    assert_equal 0, status.exitstatus
+    assert_includes calls(@format_log).fetch(0).each_cons(2).to_a, %w[--enable isEmpty]
+  end
+
+  def test_byte_order_mark_and_crlf_line_endings_are_tolerated
+    write_enables("\uFEFF--isEmpty\r\n--modifierOrder\r\n")
+
+    run_script('format')
+    pairs = calls(@format_log).fetch(0).each_cons(2).to_a
+
+    assert_includes pairs, %w[--enable isEmpty]
+    assert_includes pairs, %w[--enable modifierOrder]
+  end
+
+  def test_excludes_file_comments_are_not_passed_as_paths
+    File.write(File.join(@project, 'BuildScripts', 'SwiftFormatExtraExcludes.txt'), "# a comment\nGenerated/Thing.swift\n")
+
+    run_script('format')
+    excludes = calls(@format_log).fetch(0).each_cons(2).select { |flag, _| flag == '--exclude' }.map(&:last)
+
+    assert_includes excludes, 'Generated/Thing.swift'
+    refute_includes excludes, '# a comment'
+  end
+
+  # MARK: environment
+
+  def test_relative_srcroot_still_finds_override_files
+    write_enables("--isEmpty\n")
+
+    _out, _err, status = run_script('format', env: { 'SRCROOT' => 'project' }, chdir: @tmp)
+
+    assert_equal 0, status.exitstatus
+    assert_includes calls(@format_log).fetch(0).each_cons(2).to_a, %w[--enable isEmpty]
+  end
+
+  def test_srcroot_is_used_when_the_working_directory_differs
+    write_enables("--isEmpty\n")
+    elsewhere = Dir.mktmpdir('elsewhere')
+
+    run_script('format', '--paths', 'App', chdir: elsewhere)
+
+    assert_includes calls(@format_log).fetch(0).each_cons(2).to_a, %w[--enable isEmpty]
+    assert_equal File.realpath(@project), File.read("#{@format_log}.cwd").chomp,
+                 'relative --paths are relative to SRCROOT, so the tool must run there'
+  ensure
+    FileUtils.remove_entry(elsewhere) if elsewhere
+  end
+
+  def test_runs_under_the_system_ruby_with_override_files_present
+    system_ruby = '/usr/bin/ruby'
+    skip 'no /usr/bin/ruby on this machine' unless File.executable?(system_ruby)
+    write_enables("--isEmpty\n")
+
+    out, err, status = run_script('lint', ruby: system_ruby)
+
+    assert_equal 0, status.exitstatus, out + err
+    assert_equal 1, calls(@lint_log).length
+  end
+
+  # MARK: what is checked before anything runs
+
+  def test_missing_swiftlint_binary_exits_2_before_swiftformat_runs
+    FileUtils.rm_f(File.join(@pods, 'SwiftLint/swiftlint'))
+
+    out, err, status = run_script('lint')
+
+    assert_equal 2, status.exitstatus
+    assert_match(%r{^error: SGStyle: .*SwiftLint/swiftlint}, out + err)
+    assert_empty calls(@format_log)
+  end
+
+  def test_missing_swiftlint_rules_exits_2_before_anything_runs
+    FileUtils.rm_f(File.join(@rules_dir, 'swiftlint.yml'))
+
+    out, err, status = run_script('lint')
+
+    assert_equal 2, status.exitstatus
+    assert_match(/^error: SGStyle: .*swiftlint\.yml/, out + err)
+    assert_empty calls(@format_log)
+  end
+
+  # MARK: swiftlint scope
+
+  def test_swiftlint_is_quiet
+    run_script('lint')
+
+    assert_includes calls(@lint_log).fetch(0), '--quiet'
+  end
+
+  def test_swiftlint_skips_pods_and_each_generated_directory_by_absolute_path
+    FileUtils.mkdir_p([File.join(@project, 'App', 'Generated'), File.join(@project, 'Pods', 'Thing', 'Generated'),
+                       File.join(@project, 'Other', 'Deep', 'Generated')])
+
+    run_script('lint')
+    configs = File.read("#{@lint_log}.configs")
+    root = File.realpath(@project)
+
+    assert_includes configs, "  - #{root}/Pods\n"
+    assert_includes configs, "  - #{root}/App/Generated\n"
+    assert_includes configs, "  - #{root}/Other/Deep/Generated\n"
+    refute_includes configs, '**', 'SwiftLint does not apply an absolute ** glob consistently across /var and /private/var'
+    refute_includes configs, "#{root}/Pods/Thing/Generated", 'Pods is already excluded as a whole'
+  end
+
+  def test_generated_swiftlint_config_is_removed_after_the_run
+    run_script('lint')
+    generated = calls(@lint_log).fetch(0).each_cons(2).select { |flag, _| flag == '--config' }.map(&:last)
+
+    assert generated.any?, 'swiftlint must receive config files'
+    assert(generated.none? { |path| File.basename(path).start_with?('sgstyle') && File.exist?(path) },
+           'temporary SGStyle config files must not be left behind')
+  end
+
+  def test_signal_killed_tool_is_reported_as_a_signal
+    tool = File.join(@pods, 'SwiftFormat/CommandLineTool/swiftformat')
+    File.write(tool, "#!/bin/sh\nkill -9 $$\n")
+    File.chmod(0o755, tool)
+
+    out, err, status = run_script('format')
+
+    refute_equal 0, status.exitstatus
+    assert_match(/^error: SGStyle: swiftformat failed \(signal 9\)$/, out + err)
   end
 
   def test_script_never_touches_the_network

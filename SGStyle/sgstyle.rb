@@ -18,9 +18,11 @@
 #   SwiftFormatExtraDisables.txt   one `--ruleName` per line, passed as `--disable ruleName`
 #   SwiftFormatExtraExcludes.txt   one path per line, passed as `--exclude path`
 #   swiftlint_childconfig.yml      a second SwiftLint `--config`
-# Lines starting with `#` are comments.
+# Lines starting with `#` are comments, and `#` after whitespace starts a trailing comment. A token that is not
+# `--ruleName` is an error, not ignored: a rule that was meant to be enforced must never be dropped silently.
 
 require 'English'
+require 'tempfile'
 
 module SGStyle
   USAGE = 'usage: sgstyle.rb (format|lint) [--paths PATH...]'
@@ -30,6 +32,7 @@ module SGStyle
   OVERRIDES_DIR = 'BuildScripts'
 
   class MissingFile < StandardError; end
+  class InvalidOverride < StandardError; end
 
   Environment = Struct.new(:pod_dir, :pods_root, :root, keyword_init: true) do
     def rules(name)
@@ -54,7 +57,7 @@ module SGStyle
     Environment.new(
       pod_dir: pod_dir,
       pods_root: present(ENV['PODS_ROOT']) || File.dirname(pod_dir),
-      root: present(ENV['SRCROOT']) || Dir.pwd
+      root: File.realpath(present(ENV['SRCROOT']) || Dir.pwd)
     )
   end
 
@@ -72,20 +75,29 @@ module SGStyle
     File.realpath(path)
   end
 
+  # Lines of an override file with BOM, line endings, blank lines and comments removed, as [text, line_number].
+  def self.override_lines(path)
+    File.readlines(path, chomp: true).each_with_index.map do |line, index|
+      text = line.sub(/\A\uFEFF/, '').sub(/(\A|\s)#.*\z/, '').strip
+      [text, index + 1]
+    end.reject { |text, _| text.empty? }
+  end
+
   def self.rule_names(path)
     return [] unless File.file?(path)
 
-    File.readlines(path, chomp: true).flat_map do |line|
-      next [] if line.strip.start_with?('#')
-
-      line.split.filter_map { |token| token[/\A--([A-Za-z0-9_]+)\z/, 1] }
+    override_lines(path).flat_map do |text, number|
+      text.split.map do |token|
+        token[/\A--([A-Za-z0-9_]+)\z/, 1] ||
+          raise(InvalidOverride, "#{path}:#{number}: unrecognized rule token '#{token}' (expected --ruleName)")
+      end
     end
   end
 
   def self.path_lines(path)
     return [] unless File.file?(path)
 
-    File.readlines(path, chomp: true).map(&:strip).reject { |line| line.empty? || line.start_with?('#') }
+    override_lines(path).map(&:first)
   end
 
   def self.swiftformat_arguments(env, rules, paths, lint:)
@@ -98,11 +110,31 @@ module SGStyle
     arguments
   end
 
-  def self.swiftlint_arguments(env, rules, paths)
+  # SwiftLint resolves `excluded` entries in the pod's rules file relative to that file, so the client's
+  # Pods and Generated directories are excluded by absolute path through a second, temporary config.
+  # Each Generated directory is listed explicitly: SwiftLint does not match an absolute `**` glob when the
+  # repo sits under a symlinked path such as macOS's /var -> /private/var.
+  def self.generated_directories(root)
+    Dir.glob('**/Generated', base: root)
+       .select { |path| File.directory?(File.join(root, path)) && !path.start_with?('Pods/') }
+       .sort
+  end
+
+  def self.swiftlint_arguments(env, rules, scope_config, paths)
     arguments = ['lint', '--config', rules]
     child = env.override('swiftlint_childconfig.yml')
     arguments.push('--config', File.realpath(child)) if File.file?(child)
+    arguments.push('--config', scope_config)
     arguments + ['--strict', '--quiet', *paths]
+  end
+
+  def self.with_swiftlint_scope_config(env)
+    Tempfile.create(['sgstyle', '.yml']) do |file|
+      excluded = ['Pods', *generated_directories(env.root)].map { |path| "  - #{env.root}/#{path}\n" }
+      file.write("excluded:\n#{excluded.join}")
+      file.flush
+      yield file.path
+    end
   end
 
   # Returns true when the tool ran and exited 0. Prints an Xcode-parsable error line otherwise.
@@ -110,10 +142,16 @@ module SGStyle
     launched = system(executable, *arguments)
     return true if launched
 
-    # `system` returns nil when the process could not be started and false when it exited non-zero.
-    detail = launched.nil? ? 'could not be launched' : "exit #{$CHILD_STATUS.exitstatus}"
-    report("#{label} failed (#{detail})")
+    report("#{label} failed (#{failure_detail(launched)})")
     false
+  end
+
+  # `system` returns nil when the process could not be started and false when it exited non-zero or was signaled.
+  def self.failure_detail(launched)
+    return 'could not be launched' if launched.nil?
+
+    status = $CHILD_STATUS
+    status.exitstatus ? "exit #{status.exitstatus}" : "signal #{status.termsig}"
   end
 
   def self.format(env, paths)
@@ -122,18 +160,22 @@ module SGStyle
     run_tool('swiftformat', swiftformat, swiftformat_arguments(env, rules, paths, lint: false)) ? 0 : 1
   end
 
-  # Both tools always run so a single invocation reports every finding.
+  # Both tools always run so a single invocation reports every finding. Every file and override is validated
+  # before either tool starts.
   def self.lint(env, paths)
     swiftformat = require_file(env.swiftformat)
     swiftlint = require_file(env.swiftlint)
     format_rules = require_file(env.rules('airbnb.swiftformat'))
     lint_rules = require_file(env.rules('swiftlint.yml'))
+    format_arguments = swiftformat_arguments(env, format_rules, paths, lint: true)
 
-    results = [
-      run_tool('swiftformat --lint', swiftformat, swiftformat_arguments(env, format_rules, paths, lint: true)),
-      run_tool('swiftlint --strict', swiftlint, swiftlint_arguments(env, lint_rules, paths))
-    ]
-    results.all? ? 0 : 1
+    with_swiftlint_scope_config(env) do |scope_config|
+      results = [
+        run_tool('swiftformat --lint', swiftformat, format_arguments),
+        run_tool('swiftlint --strict', swiftlint, swiftlint_arguments(env, lint_rules, scope_config, paths))
+      ]
+      results.all? ? 0 : 1
+    end
   end
 
   def self.parse(argv)
@@ -158,6 +200,9 @@ module SGStyle
     public_send(command, env, paths)
   rescue MissingFile => e
     report("missing #{e.message}. Run `pod install` so the SGStyle, SwiftFormat and SwiftLint pods are present.")
+    EXIT_MISSING
+  rescue InvalidOverride => e
+    report(e.message)
     EXIT_MISSING
   end
 end
