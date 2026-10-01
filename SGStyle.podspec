@@ -12,6 +12,7 @@ Pod::Spec.new do |s|
   s.authors = 'Slumber Group'
   s.source = { :git => 'https://github.com/slumberGroup/swift.git', :tag => "sgstyle-#{s.version}" }
   s.ios.deployment_target = '15.0'
+  s.swift_versions = ['5.0']
 
   s.preserve_paths = [
     'SGStyle/sgstyle.rb',

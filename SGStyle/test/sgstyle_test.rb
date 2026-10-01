@@ -29,15 +29,15 @@ class SGStyleTest < Minitest::Test
     FileUtils.cp(SCRIPT, @script) if File.file?(SCRIPT)
     @format_log = File.join(@tmp, 'swiftformat.args')
     @lint_log = File.join(@tmp, 'swiftlint.args')
-    install_stub('SwiftFormat/CommandLineTool/swiftformat', @format_log, 'FAKE_SWIFTFORMAT_EXIT')
-    install_stub('SwiftLint/swiftlint', @lint_log, 'FAKE_SWIFTLINT_EXIT')
+    install_stub('SwiftFormat/CommandLineTool/swiftformat', @format_log, 'FAKE_SWIFTFORMAT_EXIT', 'FAKE_SWIFTFORMAT_OUTPUT')
+    install_stub('SwiftLint/swiftlint', @lint_log, 'FAKE_SWIFTLINT_EXIT', 'FAKE_SWIFTLINT_OUTPUT')
   end
 
   def teardown
     FileUtils.remove_entry(@tmp)
   end
 
-  def install_stub(relative_path, log_path, exit_var)
+  def install_stub(relative_path, log_path, exit_var, output_var)
     path = File.join(@pods, relative_path)
     FileUtils.mkdir_p(File.dirname(path))
     File.write(path, <<~SH)
@@ -48,6 +48,7 @@ class SGStyleTest < Minitest::Test
       done
       printf '%s\\n' "$PWD" > "#{log_path}.cwd"
       printf -- '--- end of call\\n' >> "#{log_path}"
+      [ -n "${#{output_var}:-}" ] && printf '%s\\n' "${#{output_var}}"
       exit "${#{exit_var}:-0}"
     SH
     File.chmod(0o755, path)
@@ -372,6 +373,41 @@ class SGStyleTest < Minitest::Test
 
     refute_equal 0, status.exitstatus
     assert_match(/^error: SGStyle: swiftformat failed \(signal 9\)$/, out + err)
+  end
+
+  # MARK: SwiftLint configuration problems
+
+  CONFIG_WARNINGS = [
+    "warning: 'not_a_real_rule' is not a valid rule identifier",
+    "warning: Configuration for 'function_parameter_count' rule contains the invalid key(s) 'oops'.",
+    "warning: Invalid configuration for 'sg_broken' rule. Falling back to default.",
+    "warning: Invalid configuration for 'x' rule: something. Falling back to default."
+  ].freeze
+
+  def test_swiftlint_configuration_warnings_fail_the_run_even_when_swiftlint_exits_zero
+    CONFIG_WARNINGS.each do |warning|
+      out, err, status = run_script('lint', env: { 'FAKE_SWIFTLINT_OUTPUT' => warning })
+
+      assert_equal 1, status.exitstatus, "expected failure for #{warning.inspect}"
+      assert_match(/^error: SGStyle: swiftlint --strict reported a configuration problem/, out + err)
+      assert_includes out + err, warning, 'the original warning must still be shown'
+    end
+  end
+
+  def test_ordinary_tool_warnings_do_not_fail_the_run
+    out, err, status = run_script(
+      'lint',
+      env: { 'FAKE_SWIFTFORMAT_OUTPUT' => 'warning: redundantProperty rule is deprecated. Use redundantVariable instead.',
+             'FAKE_SWIFTLINT_OUTPUT' => '/p/File.swift:3:1: warning: Line should be 120 characters or less (line_length)' }
+    )
+
+    assert_equal 0, status.exitstatus, out + err
+  end
+
+  def test_swiftlint_output_is_passed_through
+    out, err, _status = run_script('lint', env: { 'FAKE_SWIFTLINT_OUTPUT' => 'Linting Swift files in current working directory' })
+
+    assert_includes out + err, 'Linting Swift files in current working directory'
   end
 
   def test_script_never_touches_the_network

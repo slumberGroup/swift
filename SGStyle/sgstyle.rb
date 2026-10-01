@@ -22,6 +22,7 @@
 # `--ruleName` is an error, not ignored: a rule that was meant to be enforced must never be dropped silently.
 
 require 'English'
+require 'open3'
 require 'tempfile'
 
 module SGStyle
@@ -29,6 +30,9 @@ module SGStyle
   EXIT_USAGE = 64
   EXIT_MISSING = 2
   FIXED_EXCLUDES = ['Pods', '**/Generated'].freeze
+  # SwiftLint reports a ruleset it cannot fully apply (a rule or option added by a newer SwiftLint, a broken
+  # custom rule) as a warning and still exits 0, so `lint` would pass on rules that were silently not applied.
+  SWIFTLINT_CONFIG_PROBLEM = /is not a valid rule identifier|contains the invalid key|Invalid configuration for|Falling back to default/.freeze
   OVERRIDES_DIR = 'BuildScripts'
 
   class MissingFile < StandardError; end
@@ -146,6 +150,24 @@ module SGStyle
     false
   end
 
+  # Like run_tool, but also fails when the tool's output matches `problem` even though it exited 0.
+  # The output is shown exactly as the tool printed it.
+  def self.run_tool_checking_output(label, executable, arguments, problem)
+    output, status = Open3.capture2e(executable, *arguments)
+    print output
+    unless status.success?
+      report("#{label} failed (#{status.exitstatus ? "exit #{status.exitstatus}" : "signal #{status.termsig}"})")
+      return false
+    end
+    return true unless output.match?(problem)
+
+    report("#{label} reported a configuration problem, so its rules were not all applied (see the warning above)")
+    false
+  rescue SystemCallError
+    report("#{label} failed (could not be launched)")
+    false
+  end
+
   # `system` returns nil when the process could not be started and false when it exited non-zero or was signaled.
   def self.failure_detail(launched)
     return 'could not be launched' if launched.nil?
@@ -172,7 +194,8 @@ module SGStyle
     with_swiftlint_scope_config(env) do |scope_config|
       results = [
         run_tool('swiftformat --lint', swiftformat, format_arguments),
-        run_tool('swiftlint --strict', swiftlint, swiftlint_arguments(env, lint_rules, scope_config, paths))
+        run_tool_checking_output('swiftlint --strict', swiftlint, swiftlint_arguments(env, lint_rules, scope_config, paths),
+                                 SWIFTLINT_CONFIG_PROBLEM)
       ]
       results.all? ? 0 : 1
     end

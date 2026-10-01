@@ -18,6 +18,6 @@ jobs:
       - name: Script unit tests
         run: ruby SGStyle/test/sgstyle_test.rb
       - name: Lint podspec
-        run: pod lib lint SGStyle.podspec --allow-warnings
+        run: pod lib lint SGStyle.podspec
       - name: Install the pod and run its tools on the fixtures
         run: sh SGStyle/.fixture/run.sh

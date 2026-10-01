@@ -6,7 +6,7 @@ require 'tempfile'
 namespace :lint do
   desc 'Lints swift files'
   task :swift do
-    sh 'swift package --allow-writing-to-package-directory format --lint'
+    sh 'swift package --allow-writing-to-package-directory format --lint --exclude SGStyle'
   end
 
   desc 'Lints README.md'
@@ -31,7 +31,7 @@ end
 namespace :format do
   desc 'Formats swift files'
   task :swift do
-    sh 'swift package --allow-writing-to-package-directory format'
+    sh 'swift package --allow-writing-to-package-directory format --exclude SGStyle'
   end
 
   desc 'Formats README.md'

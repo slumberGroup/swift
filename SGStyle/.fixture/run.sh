@@ -32,7 +32,7 @@ lint() {
 echo "== Good must pass"
 lint Good
 
-echo "== Bad must fail with a style finding"
+echo "== Bad must fail with a SwiftFormat finding and a SwiftLint finding"
 if output=$(lint Bad 2>&1); then
   echo "$output"
   echo "error: lint passed on Bad/, so it cannot detect violations" >&2
@@ -43,6 +43,11 @@ if ! echo "$output" | grep -Eq 'error: \([A-Za-z]+\)'; then
   echo "error: lint failed on Bad/ but not with a SwiftFormat rule finding" >&2
   exit 1
 fi
+if ! echo "$output" | grep -Eq 'error: .*\(no_direct_standard_out_logs\)'; then
+  echo "error: lint failed on Bad/ but SwiftLint did not report its violation, so the SwiftLint rules may not be applied" >&2
+  exit 1
+fi
+
 echo "== Pods/ and Generated/ in a client must be ignored by both tools"
 scope=$(mktemp -d)
 trap 'rm -rf "$scope"' EXIT

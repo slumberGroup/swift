@@ -52,7 +52,7 @@ sh SGStyle/.fixture/run.sh          # installs the pod from the current commit a
 ```
 
 `run.sh` installs from the current commit, so commit before running it. Its fixtures live in a hidden directory so
-`swift package format --lint` (the `Test Package Plugin` CI job) does not lint the deliberately mis-formatted `Bad.swift`.
+SwiftFormat skips them, and the root `Rakefile` excludes `SGStyle` from `swift package format --lint` (the `Test Package Plugin` CI job) because SwiftLint does not skip hidden directories and `Bad.swift` deliberately violates both tools.
 
 ## Releasing
 
